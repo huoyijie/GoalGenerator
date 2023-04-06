@@ -1,0 +1,23 @@
+name: Role
+storageRules:
+    - embeddingBase
+componentRules:
+    - lazy
+fields:
+    - name: ID
+      storageRules:
+        - primary
+      component: number
+      componentRules:
+        - sortable
+    - name: Name
+      storageRules:
+        - unique
+      component: text
+      componentRules:
+        - sortable
+      validateRules:
+        - required
+        - alphanum
+        - '@min=3'
+        - '@max=40'
