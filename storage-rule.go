@@ -56,5 +56,5 @@ func validStorageRule(sr *StorageRule, rules []StorageRule) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid storage rule: %v", sr)
+	return fmt.Errorf("invalid storage rule: %v", *sr)
 }

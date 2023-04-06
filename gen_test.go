@@ -63,5 +63,8 @@ func TestInput(t *testing.T) {
 		if m.Name != "User" {
 			t.Fatal("Unmarshal failed")
 		}
+		if err := m.Valid(); err != nil {
+			t.Fatalf("%+v", err)
+		}
 	}
 }

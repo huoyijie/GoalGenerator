@@ -52,7 +52,7 @@ func (c *Component) Valid() error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid component: %v", c)
+	return fmt.Errorf("invalid component: %v", *c)
 }
 
 var _ IValid = (*Component)(nil)

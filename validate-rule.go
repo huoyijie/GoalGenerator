@@ -50,7 +50,7 @@ func (vr *ValidateRule) Valid() error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid validate rule: %v", vr)
+	return fmt.Errorf("invalid validate rule: %v", *vr)
 }
 
 var _ IValid = (*ValidateRule)(nil)

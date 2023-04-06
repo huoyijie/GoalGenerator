@@ -75,5 +75,5 @@ func validComponentRule(cr *ComponentRule, rules []ComponentRule) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid component rule: %v", cr)
+	return fmt.Errorf("invalid component rule: %v", *cr)
 }
