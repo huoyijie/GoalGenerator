@@ -1,5 +1,5 @@
-package: auth
-name: Role
+package: admin
+name: Session
 storageRules:
     - embeddingBase
 componentRules:
@@ -11,14 +11,13 @@ fields:
       component: number
       componentRules:
         - sortable
-    - name: Name
-      storageRules:
-        - unique
-      component: text
+    - name: UserID
+      component: number
       componentRules:
-        - sortable
+        - hidden
+    - name: User
+      component: dropdown
+      componentRules:
+        - '@belongTo=auth.User.Username'
       validateRules:
         - required
-        - alphanum
-        - '@min=3'
-        - '@max=40'

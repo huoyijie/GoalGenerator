@@ -18,6 +18,7 @@ const (
 	COMPONENT_RULE_FILTER        ComponentRule = "filter"
 	COMPONENT_RULE_SHOW_TIME     ComponentRule = "showTime"
 	COMPONENT_RULE_SHOW_ICON     ComponentRule = "showIcon"
+	COMPONENT_RULE_FLOAT                       = "float"
 	COMPONENT_RULE_BELONGTO      ComponentRule = "@belongTo"
 	COMPONENT_RULE_UPLOADTO      ComponentRule = "@uploadTo"
 )
@@ -33,6 +34,7 @@ var FIELD_COMPONENT_RULES = []ComponentRule{
 	COMPONENT_RULE_FILTER,
 	COMPONENT_RULE_SHOW_TIME,
 	COMPONENT_RULE_SHOW_ICON,
+	COMPONENT_RULE_FLOAT,
 	COMPONENT_RULE_BELONGTO,
 	COMPONENT_RULE_UPLOADTO,
 }

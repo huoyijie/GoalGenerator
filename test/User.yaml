@@ -1,3 +1,4 @@
+package: auth
 name: User
 storageRules:
     - embeddingBase
@@ -31,3 +32,11 @@ fields:
         - required
         - alphanum
         - '@min=3'
+    - name: RoleID
+      component: number
+    - name: Role
+      component: dropdown
+      componentRules:
+        - '@belongTo=Role.Name'
+      validateRules:
+        - required

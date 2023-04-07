@@ -1,6 +1,13 @@
 package goalgenerator
 
 import (
+	_ "embed"
+	"fmt"
+	"log"
+	"os"
+	"text/template"
+
+	"golang.org/x/mod/modfile"
 	"gorm.io/gorm"
 )
 
@@ -23,4 +30,30 @@ type IValid interface {
 type IProp interface {
 	IsProp() bool
 	Prop() (string, string)
+}
+
+//go:embed template/*.tpl
+var tmpl string
+
+func GenModel(m *Model) error {
+	os.Mkdir(m.Package, os.ModePerm)
+
+	f, err := os.Create(fmt.Sprintf("%s/%s.go", m.Package, m.Name))
+	if err != nil {
+		return err
+	}
+
+	t := template.Must(template.New("").Parse(tmpl))
+
+	return t.Execute(f, m)
+}
+
+func GetMoudlePath() (pkgPath string) {
+	goModBytes, err := os.ReadFile("go.mod")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pkgPath = modfile.ModulePath(goModBytes)
+	return
 }
