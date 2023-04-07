@@ -14,6 +14,10 @@ type Model struct {
 	Fields         []Field         `yaml:",omitempty"`
 }
 
+func (m *Model) Version() string {
+	return Version
+}
+
 func (m *Model) Imports() (imports []string) {
 	if m.EmbeddingBase() || m.Lazy() {
 		imports = append(imports, fmt.Sprintf(`"%s"`, GetMoudlePath()))
