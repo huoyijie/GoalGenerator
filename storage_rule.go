@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	STORAGE_RULE_PRIMARY        StorageRule = "primary"
+	STORAGE_RULE_PRIMARY        StorageRule = "primaryKey"
 	STORAGE_RULE_UNIQUE         StorageRule = "unique"
 	STORAGE_RULE_INDEX          StorageRule = "index"
 	STORAGE_RULE_EMBEDDING_BASE StorageRule = "embeddingBase"
