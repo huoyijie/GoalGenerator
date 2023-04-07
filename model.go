@@ -15,6 +15,9 @@ type Model struct {
 }
 
 func (m *Model) Imports() (imports []string) {
+	if m.EmbeddingBase() {
+		imports = append(imports, fmt.Sprintf(`"%s"`, GetMoudlePath()))
+	}
 	for _, f := range m.Fields {
 		if t := f.Type(); t == "time.Time" {
 			imports = append(imports, `"time"`)
@@ -23,6 +26,15 @@ func (m *Model) Imports() (imports []string) {
 		}
 	}
 	return
+}
+
+func (m *Model) EmbeddingBase() bool {
+	for _, r := range m.StorageRules {
+		if r == STORAGE_RULE_EMBEDDING_BASE {
+			return true
+		}
+	}
+	return false
 }
 
 // Valid implements IValid

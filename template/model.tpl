@@ -5,6 +5,8 @@ import ({{range .Imports}}
     {{.}}{{end}}
 )
 {{end}}
-type {{.Name}} struct { {{range .Fields}}
+type {{.Name}} struct { {{if .EmbeddingBase}}
+    goalgenerator.Base{{end}}
+{{range .Fields}}
     {{.Name}} {{.Type}}{{end}}
 }

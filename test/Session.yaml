@@ -5,12 +5,6 @@ storageRules:
 componentRules:
     - lazy
 fields:
-    - name: ID
-      storageRules:
-        - primary
-      component: number
-      componentRules:
-        - sortable
     - name: UserID
       component: number
       componentRules:

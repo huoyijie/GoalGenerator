@@ -21,7 +21,7 @@ func (*Lazy) IsLasy() bool {
 	return true
 }
 
-type Base gorm.Model
+type Base = gorm.Model
 
 type IValid interface {
 	Valid() error
