@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/huoyijie/GoalGenerator",
+    "title": "GoalGenerator Schema",
+    "type": "object",
+    "properties": {
+        "package": {
+            "type": "string",
+            "description": "name of package"
+        },
+        "name": {
+            "type": "string",
+            "description": "name of type"
+        },
+        "storageRules": {
+            "type": "array",
+            "description": "storage rules",
+            "allOf": [{
+                "type": "string",
+                "enum": ["embeddingBase"]
+            }]
+        },
+        "componentRules": {
+            "type": "array",
+            "description": "component rules",
+            "allOf": [{
+                "type": "string",
+                "enum": ["lazy"]
+            }]
+        },
+        "fields": {
+            "type": "array",
+            "description": "fields of type",
+            "allOf": [{
+                "type": "object",
+                "description": "properties of field",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "name of field"
+                    },
+                    "storageRules": {
+                        "type": "array",
+                        "description": "storage rules",
+                        "allOf": [{
+                            "type": "string",
+                            "enum": ["primaryKey", "unique", "index"]
+                        }]
+                    },
+                    "component": {
+                        "type": "string",
+                        "description": "name of component",
+                        "enum": ["number", "uuid", "switch", "text", "password", "dropdown", "calendar", "file"]
+                    },
+                    "componentRules": {
+                        "type": "array",
+                        "description": "component rules",
+                        "allOf": [{
+                            "type": "string"
+                        }]
+                    },
+                    "validateRules": {
+                        "type": "array",
+                        "description": "validate rules",
+                        "allOf": [{
+                            "type": "string"
+                        }]
+                    }
+                }
+            }]
+        }
+    }
+}
