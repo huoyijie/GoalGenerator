@@ -5,8 +5,9 @@ import ({{range .Imports}}
     {{.}}{{end}}
 )
 {{end}}
-type {{.Name}} struct { {{if .EmbeddingBase}}
+type {{.Name}} struct { {{if .Lazy}}
+    goalgenerator.Lazy{{end}}{{if .EmbeddingBase}}
     goalgenerator.Base{{end}}
 {{range .Fields}}
-    {{.Name}} {{.Type}}{{end}}
+    {{.Name}} {{.Type}} `{{.Tag}}`{{end}}
 }

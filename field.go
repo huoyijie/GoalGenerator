@@ -43,6 +43,70 @@ func (f *Field) Type() (t string) {
 	return
 }
 
+func (f *Field) Tag() (tag string) {
+	sb := strings.Builder{}
+	var primary, unique bool
+	if len(f.StorageRules) > 0 {
+		sb.WriteString(`gorm:"`)
+		for i, r := range f.StorageRules {
+			if r == STORAGE_RULE_PRIMARY {
+				primary = true
+			} else if r == STORAGE_RULE_UNIQUE {
+				unique = true
+			}
+			if r.IsProp() {
+				sb.WriteString(string(r)[1:])
+			} else {
+				sb.WriteString(string(r))
+			}
+			if i < len(f.StorageRules)-1 {
+				sb.WriteRune(',')
+			} else {
+				sb.WriteString(`" `)
+			}
+		}
+	}
+
+	if len(f.ValidateRules) > 0 {
+		sb.WriteString(`binding:"`)
+		for i, r := range f.ValidateRules {
+			if r.IsProp() {
+				sb.WriteString(string(r)[1:])
+			} else {
+				sb.WriteString(string(r))
+			}
+			if i < len(f.ValidateRules)-1 {
+				sb.WriteRune(',')
+			} else {
+				sb.WriteString(`" `)
+			}
+		}
+	}
+
+	sb.WriteString(`goal:"<`)
+	sb.WriteString(string(f.Component))
+	sb.WriteRune('>')
+	if primary {
+		sb.WriteString("primary,")
+	}
+	if unique {
+		sb.WriteString("unique,")
+	}
+	for i, r := range f.ComponentRules {
+		if r.IsProp() {
+			sb.WriteString(string(r)[1:])
+		} else {
+			sb.WriteString(string(r))
+		}
+		if i < len(f.ComponentRules)-1 {
+			sb.WriteRune(',')
+		}
+	}
+	sb.WriteString(`"`)
+
+	return sb.String()
+}
+
 // Valid implements IValid
 func (f *Field) Valid() error {
 	if f.Name == "" {

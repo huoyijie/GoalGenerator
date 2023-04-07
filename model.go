@@ -15,7 +15,7 @@ type Model struct {
 }
 
 func (m *Model) Imports() (imports []string) {
-	if m.EmbeddingBase() {
+	if m.EmbeddingBase() || m.Lazy() {
 		imports = append(imports, fmt.Sprintf(`"%s"`, GetMoudlePath()))
 	}
 	for _, f := range m.Fields {
@@ -31,6 +31,15 @@ func (m *Model) Imports() (imports []string) {
 func (m *Model) EmbeddingBase() bool {
 	for _, r := range m.StorageRules {
 		if r == STORAGE_RULE_EMBEDDING_BASE {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *Model) Lazy() bool {
+	for _, r := range m.ComponentRules {
+		if r == COMPONENT_RULE_LAZY {
 			return true
 		}
 	}
