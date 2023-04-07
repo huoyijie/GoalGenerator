@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const Version string = "0.0.7"
+const Version string = "0.0.8"
 
 type ILazy interface {
 	IsLazy() bool
