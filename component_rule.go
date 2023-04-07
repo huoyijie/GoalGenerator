@@ -8,6 +8,7 @@ import (
 const (
 	COMPONENT_RULE_LAZY          ComponentRule = "lazy"
 	COMPONENT_RULE_SORTABLE      ComponentRule = "sortable"
+	COMPONENT_RULE_ASC           ComponentRule = "asc"
 	COMPONENT_RULE_DESC          ComponentRule = "desc"
 	COMPONENT_RULE_GLOBAL_SEARCH ComponentRule = "globalSearch"
 	COMPONENT_RULE_SECRET        ComponentRule = "secret"
@@ -25,6 +26,7 @@ const (
 
 var FIELD_COMPONENT_RULES = []ComponentRule{
 	COMPONENT_RULE_SORTABLE,
+	COMPONENT_RULE_ASC,
 	COMPONENT_RULE_DESC,
 	COMPONENT_RULE_GLOBAL_SEARCH,
 	COMPONENT_RULE_HIDDEN,
