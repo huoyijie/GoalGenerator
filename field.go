@@ -21,6 +21,9 @@ func (f *Field) Type() (t string) {
 			if r == COMPONENT_RULE_FLOAT {
 				t = "float"
 				break
+			} else if r == COMPONENT_RULE_UINT {
+				t = "uint"
+				break
 			}
 		}
 	case COMPONENT_UUID, COMPONENT_TEXT, COMPONENT_PASSWORD, COMPONENT_FILE:
@@ -123,10 +126,22 @@ func (f *Field) Valid() error {
 		return err
 	}
 
+	isNumber := f.Component == COMPONENT_NUMBER
+	var isUint, isFloat bool
 	for _, r := range f.ComponentRules {
 		if err := r.ValidField(); err != nil {
 			return err
 		}
+		if isNumber {
+			if r == COMPONENT_RULE_FLOAT {
+				isFloat = true
+			} else if r == COMPONENT_RULE_UINT {
+				isUint = true
+			}
+		}
+	}
+	if isUint && isFloat {
+		return errors.New("number can not be set uint and float at the same time")
 	}
 
 	for _, r := range f.ValidateRules {
