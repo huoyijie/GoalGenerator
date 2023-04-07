@@ -6,6 +6,7 @@ import (
 )
 
 type Field struct {
+	Model          *Model          `yaml:"-"`
 	Name           string          `yaml:",omitempty"`
 	StorageRules   []StorageRule   `yaml:"storageRules,omitempty"`
 	Component      Component       `yaml:",omitempty"`
@@ -97,7 +98,17 @@ func (f *Field) Tag() (tag string) {
 	}
 	for i, r := range f.ComponentRules {
 		if r.IsProp() {
-			sb.WriteString(string(r)[1:])
+			if k, v := r.Prop(); ComponentRule(k) == COMPONENT_RULE_BELONGTO {
+				if parts := strings.Split(v, "."); len(parts) == 2 {
+					sb.WriteString(k[1:])
+					sb.WriteString("=")
+					sb.WriteString(strings.Join([]string{f.Model.Package, parts[0], parts[1]}, "."))
+				} else {
+					sb.WriteString(string(r)[1:])
+				}
+			} else {
+				sb.WriteString(string(r)[1:])
+			}
 		} else {
 			sb.WriteString(string(r))
 		}

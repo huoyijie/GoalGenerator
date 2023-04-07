@@ -18,6 +18,12 @@ func (m *Model) Version() string {
 	return Version
 }
 
+func (m *Model) Setup() {
+	for i := range m.Fields {
+		m.Fields[i].Model = m
+	}
+}
+
 func (m *Model) Imports() (imports []string) {
 	if m.EmbeddingBase() || m.Lazy() {
 		imports = append(imports, fmt.Sprintf(`"%s"`, GetMoudlePath()))

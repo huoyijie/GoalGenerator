@@ -1,17 +1,46 @@
-package: admin
+package: auth
 name: Session
-storageRules:
-    - embeddingBase
-componentRules:
-    - lazy
 fields:
+    - name: ID
+      storageRules:
+        - primaryKey
+      component: number
+      componentRules:
+        - uint
+        - hidden
+    - name: Key
+      storageRules:
+        - unique
+      component: uuid
+      componentRules:
+        - readonly
+        - globalSearch
+      validateRules:
+        - required
+        - alphanum
+        - '@len=32'
     - name: UserID
       component: number
       componentRules:
-        - hidden
+        - uint
+        - autowired
     - name: User
       component: dropdown
       componentRules:
-        - '@belongTo=auth.User.Username'
+        - '@belongTo=User.Username'
+        - postonly
+        - filter
+        - globalSearch
+      validateRules:
+        - required
+    - name: ExpireDate
+      storageRules:
+        - index
+      component: calendar
+      componentRules:
+        - showTime
+        - showIcon
+        - sortable
+        - desc
       validateRules:
         - required

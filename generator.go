@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const Version string = "0.0.8"
+const Version string = "0.0.9"
 
 type ILazy interface {
 	IsLazy() bool
@@ -38,6 +38,8 @@ type IProp interface {
 var tmpl string
 
 func GenModel(m *Model) error {
+	m.Setup()
+
 	os.Mkdir(m.Package, os.ModePerm)
 
 	f, err := os.Create(fmt.Sprintf("%s/%s.go", m.Package, m.Name))
