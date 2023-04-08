@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const Version string = "0.0.11"
+const Version string = "0.0.12"
 
 //go:embed template/*.tpl
 var tmpl string

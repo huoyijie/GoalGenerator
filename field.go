@@ -184,7 +184,7 @@ func (f *Field) Tag() (tag string) {
 					}
 					sb.WriteString(ToLowerFirstLetter(f.Name))
 					sb.WriteRune('=')
-					if f.Name == "BelongTo" && strings.Count(f.Name, ".") == 1 {
+					if f.Name == "BelongTo" && strings.Count(fVal.String(), ".") == 1 {
 						sb.WriteString(pkg)
 						sb.WriteRune('.')
 					}

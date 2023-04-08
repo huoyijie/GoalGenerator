@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../goal-schema.json
-package: admin
+package: auth
 name: Session
 fields:
   - name: ID
@@ -28,7 +28,7 @@ fields:
   - name: User
     view:
       name: dropdown
-      belongto: auth.User.Username
+      belongto: User.Username
       postonly: true
       filter: true
       globalsearch: true
