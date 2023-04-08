@@ -1,37 +1,45 @@
-# yaml-language-server: $schema=https://cdn.huoyijie.cn/uploads/2023/04/goal-schema.json
+# yaml-language-server: $schema=../goal-schema.json
 package: auth
 name: User
-storageRules:
-    - embeddingBase
-componentRules:
-    - lazy
+database:
+  embeddingbase: true
+view:
+  lazy: true
 fields:
-    - name: Username
-      storageRules:
-        - unique
-      component: text
-      componentRules:
-        - sortable
-      validateRules:
-        - required
-        - alphanum
-        - '@min=3'
-        - '@max=40'
-    - name: Password
-      storageRules:
-        - unique
-      component: text
-      componentRules:
-        - sortable
-      validateRules:
-        - required
-        - alphanum
-        - '@min=3'
-    - name: RoleID
-      component: number
-    - name: Role
-      component: dropdown
-      componentRules:
-        - '@belongTo=Role.Name'
-      validateRules:
-        - required
+  - name: Username
+    database:
+      unique: true
+    view:
+      name: text
+      sortable: true
+    validator:
+      required: true
+      alphanum: true
+      min: 3
+      max: 40
+  - name: Password
+    database:
+      unique: true
+    view:
+      name: text
+      sortable: true
+    validator:
+      required: true
+      alphanum: true
+      min: 8
+  - name: RoleID
+    view:
+      name: number
+      uint: true
+  - name: Role
+    view:
+      name: dropdown
+      belongto: Role.Name
+    validator:
+      required: true
+  - name: Avatar
+    view:
+      name: file
+      uploadto: uploads
+    validator:
+      required: true

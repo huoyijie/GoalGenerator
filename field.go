@@ -1,48 +1,75 @@
 package goalgenerator
 
 import (
-	"errors"
+	"fmt"
+	"reflect"
 	"strings"
+	"unicode"
 )
 
+func ToLowerFirstLetter(str string) string {
+	a := []rune(str)
+	a[0] = unicode.ToLower(a[0])
+	return string(a)
+}
+
 type Field struct {
-	Model          *Model          `yaml:"-"`
-	Name           string          `yaml:",omitempty"`
-	StorageRules   []StorageRule   `yaml:"storageRules,omitempty"`
-	Component      Component       `yaml:",omitempty"`
-	ComponentRules []ComponentRule `yaml:"componentRules,omitempty"`
-	ValidateRules  []ValidateRule  `yaml:"validateRules,omitempty"`
+	Model    *Model `yaml:"-"`
+	Name     string `yaml:",omitempty"`
+	Database *struct {
+		PrimaryKey,
+		Unique,
+		Index bool `yaml:",omitempty"`
+	} `yaml:",omitempty"`
+	View *struct {
+		Name,
+		BelongTo,
+		UploadTo string `yaml:",omitempty"`
+		Sortable,
+		Asc,
+		Desc,
+		GlobalSearch,
+		Secret,
+		Hidden,
+		Readonly,
+		Postonly,
+		Autowired,
+		Filter,
+		ShowTime,
+		ShowIcon,
+		Uint,
+		Float bool `yaml:",omitempty"`
+	} `yaml:",omitempty"`
+	Validator *struct {
+		Required,
+		Email,
+		Alphanum,
+		Alpha bool `yaml:",omitempty"`
+		Min,
+		Max,
+		Len *int `yaml:",omitempty"`
+	} `yaml:",omitempty"`
 }
 
 func (f *Field) Type() (t string) {
-	switch f.Component {
-	case COMPONENT_NUMBER:
-		t = "int"
-		for _, r := range f.ComponentRules {
-			if r == COMPONENT_RULE_FLOAT {
-				t = "float"
-				break
-			} else if r == COMPONENT_RULE_UINT {
-				t = "uint"
-				break
-			}
+	switch f.View.Name {
+	case "number":
+		if f.View.Float {
+			t = "float"
+		} else if f.View.Uint {
+			t = "uint"
+		} else {
+			t = "int"
 		}
-	case COMPONENT_UUID, COMPONENT_TEXT, COMPONENT_PASSWORD, COMPONENT_FILE:
+	case "uuid", "text", "password", "file":
 		t = "string"
-	case COMPONENT_CALENDAR:
+	case "calendar":
 		t = "time.Time"
-	case COMPONENT_SWITCH:
+	case "switch":
 		t = "bool"
-	case COMPONENT_DROPDOWN:
-		for _, r := range f.ComponentRules {
-			if r.IsProp() {
-				if k, v := r.Prop(); ComponentRule(k) == COMPONENT_RULE_BELONGTO {
-					parts := strings.Split(v, ".")
-					t = strings.Join(parts[:len(parts)-1], ".")
-					break
-				}
-			}
-		}
+	case "dropdown":
+		parts := strings.Split(f.View.BelongTo, ".")
+		t = strings.Join(parts[:len(parts)-1], ".")
 	}
 	return
 }
@@ -50,117 +77,124 @@ func (f *Field) Type() (t string) {
 func (f *Field) Tag() (tag string) {
 	sb := strings.Builder{}
 	var primary, unique bool
-	if len(f.StorageRules) > 0 {
+	if f.Database != nil {
+		primary = f.Database.PrimaryKey
+		unique = f.Database.Unique
 		sb.WriteString(`gorm:"`)
-		for i, r := range f.StorageRules {
-			if r == STORAGE_RULE_PRIMARY {
-				primary = true
-			} else if r == STORAGE_RULE_UNIQUE {
-				unique = true
-			}
-			if r.IsProp() {
-				sb.WriteString(string(r)[1:])
-			} else {
-				sb.WriteString(string(r))
-			}
-			if i < len(f.StorageRules)-1 {
+		var hasPrev bool
+		if primary {
+			if hasPrev {
 				sb.WriteRune(',')
-			} else {
-				sb.WriteString(`" `)
 			}
+			sb.WriteString("primaryKey")
+			hasPrev = true
 		}
+		if unique {
+			if hasPrev {
+				sb.WriteRune(',')
+			}
+			sb.WriteString("unique")
+			hasPrev = true
+		}
+		if f.Database.Index {
+			if hasPrev {
+				sb.WriteRune(',')
+			}
+			sb.WriteString("index")
+		}
+		sb.WriteString(`" `)
 	}
 
-	if len(f.ValidateRules) > 0 {
+	if f.Validator != nil {
 		sb.WriteString(`binding:"`)
-		for i, r := range f.ValidateRules {
-			if r.IsProp() {
-				sb.WriteString(string(r)[1:])
-			} else {
-				sb.WriteString(string(r))
-			}
-			if i < len(f.ValidateRules)-1 {
-				sb.WriteRune(',')
-			} else {
-				sb.WriteString(`" `)
+		t := reflect.TypeOf(f.Validator).Elem()
+		val := reflect.ValueOf(f.Validator).Elem()
+		var hasPrev bool
+		for i := 0; i < t.NumField(); i++ {
+			f := t.Field(i)
+			fVal := val.FieldByName(f.Name)
+			switch fVal.Kind() {
+			case reflect.Bool:
+				if fVal.Bool() {
+					if hasPrev {
+						sb.WriteRune(',')
+					}
+					sb.WriteString(ToLowerFirstLetter(f.Name))
+					hasPrev = true
+				}
+			case reflect.Pointer:
+				if !fVal.IsNil() {
+					fVal = fVal.Elem()
+					if hasPrev {
+						sb.WriteRune(',')
+					}
+					sb.WriteString(ToLowerFirstLetter(f.Name))
+					sb.WriteRune('=')
+					sb.WriteString(fmt.Sprintf("%v", fVal.Interface()))
+					hasPrev = true
+				}
 			}
 		}
+		sb.WriteString(`" `)
 	}
 
-	sb.WriteString(`goal:"<`)
-	sb.WriteString(string(f.Component))
-	sb.WriteRune('>')
-	if primary {
-		sb.WriteString("primary,")
-	}
-	if unique {
-		sb.WriteString("unique,")
-	}
-	for i, r := range f.ComponentRules {
-		if r.IsProp() {
-			if k, v := r.Prop(); ComponentRule(k) == COMPONENT_RULE_BELONGTO {
-				if parts := strings.Split(v, "."); len(parts) == 2 {
-					sb.WriteString(k[1:])
-					sb.WriteString("=")
-					sb.WriteString(strings.Join([]string{f.Model.Package, parts[0], parts[1]}, "."))
-				} else {
-					sb.WriteString(string(r)[1:])
-				}
-			} else {
-				sb.WriteString(string(r)[1:])
+	if f.View != nil {
+		sb.WriteString(`goal:"<`)
+		sb.WriteString(f.View.Name)
+		sb.WriteRune('>')
+
+		var hasPrev bool
+		if primary {
+			if hasPrev {
+				sb.WriteRune(',')
 			}
-		} else {
-			sb.WriteString(string(r))
+			sb.WriteString("primary")
+			hasPrev = true
 		}
-		if i < len(f.ComponentRules)-1 {
-			sb.WriteRune(',')
+		if unique {
+			if hasPrev {
+				sb.WriteRune(',')
+			}
+			sb.WriteString("unique")
+			hasPrev = true
 		}
+
+		pkg := f.Model.Package
+		t := reflect.TypeOf(f.View).Elem()
+		val := reflect.ValueOf(f.View).Elem()
+		for i := 0; i < t.NumField(); i++ {
+			f := t.Field(i)
+			if f.Name == "Name" {
+				continue
+			}
+			fVal := val.FieldByName(f.Name)
+			switch fVal.Kind() {
+			case reflect.Bool:
+				if fVal.Bool() {
+					if hasPrev {
+						sb.WriteRune(',')
+					}
+					sb.WriteString(ToLowerFirstLetter(f.Name))
+					hasPrev = true
+				}
+			case reflect.String:
+				if !fVal.IsZero() {
+					if hasPrev {
+						sb.WriteRune(',')
+					}
+					sb.WriteString(ToLowerFirstLetter(f.Name))
+					sb.WriteRune('=')
+					if f.Name == "BelongTo" && strings.Count(f.Name, ".") == 1 {
+						sb.WriteString(pkg)
+						sb.WriteRune('.')
+					}
+					sb.WriteString(fVal.String())
+					hasPrev = true
+				}
+			}
+		}
+		sb.WriteString(`"`)
 	}
-	sb.WriteString(`"`)
 
 	return sb.String()
 }
-
-// Valid implements IValid
-func (f *Field) Valid() error {
-	if f.Name == "" {
-		return errors.New("field's name is required")
-	}
-
-	for _, r := range f.StorageRules {
-		if err := r.ValidField(); err != nil {
-			return err
-		}
-	}
-
-	if err := f.Component.Valid(); err != nil {
-		return err
-	}
-
-	isNumber := f.Component == COMPONENT_NUMBER
-	var isUint, isFloat bool
-	for _, r := range f.ComponentRules {
-		if err := r.ValidField(); err != nil {
-			return err
-		}
-		if isNumber {
-			if r == COMPONENT_RULE_FLOAT {
-				isFloat = true
-			} else if r == COMPONENT_RULE_UINT {
-				isUint = true
-			}
-		}
-	}
-	if isUint && isFloat {
-		return errors.New("number can not be set uint and float at the same time")
-	}
-
-	for _, r := range f.ValidateRules {
-		if err := r.Valid(); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-var _ IValid = (*Field)(nil)

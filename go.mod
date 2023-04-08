@@ -3,6 +3,7 @@ module github.com/huoyijie/GoalGenerator
 go 1.20
 
 require (
+	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
 	golang.org/x/mod v0.10.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.24.6

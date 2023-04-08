@@ -39,7 +39,7 @@ func genForDir(dir string) {
 				if err := m.Valid(); err != nil {
 					log.Fatal(err)
 				}
-				if err := goalgenerator.GenModel(m); err != nil {
+				if err := m.Gen(); err != nil {
 					log.Fatal(err)
 				}
 			}

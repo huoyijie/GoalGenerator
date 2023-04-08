@@ -1,5 +1,5 @@
 {
-    "$id": "https://cdn.huoyijie.cn/uploads/2023/04/goal-schema.json",
+    "$id": "https://raw.githubusercontent.com/huoyijie/GoalGenerator/master/schema.json",
     "$schema": "https://json-schema.org/draft-07/schema",
     "title": "GoalGenerator Schema",
     "description": "Define a model with CRUD required",
@@ -14,70 +14,170 @@
             "type": "string",
             "description": "name of type"
         },
-        "storageRules": {
-            "type": "array",
-            "description": "storage rules",
-            "items": {
-                "type": "string",
-                "enum": ["embeddingBase"]
-            },
-            "minItems": 1,
-            "uniqueItems": true
+        "database": {
+            "type": "object",
+            "description": "rules of database [embeddingbase]",
+            "properties": {
+                "embeddingbase": {
+                    "type": "boolean",
+                    "description": "embedding base for (ID, CreatedAt, UpdateAt...)"
+                }
+            }
         },
-        "componentRules": {
-            "type": "array",
-            "description": "component rules",
-            "items": {
-                "type": "string",
-                "enum": ["lazy"]
-            },
-            "minItems": 1,
-            "uniqueItems": true
+        "view": {
+            "type": "object",
+            "description": "rules of view [lazy]",
+            "properties": {
+                "lazy": {
+                    "type": "boolean",
+                    "description": "lazy load for datatable pagination"
+                }
+            }
         },
         "fields": {
             "type": "array",
             "description": "fields of type",
             "items": {
                 "type": "object",
-                "description": "properties of field",
-                "required": ["name", "component"],
+                "description": "properties of field [name, database, view, validator]",
+                "required": ["name", "view"],
                 "properties": {
                     "name": {
                         "type": "string",
                         "description": "name of field"
                     },
-                    "storageRules": {
-                        "type": "array",
-                        "description": "storage rules",
-                        "items": {
-                            "type": "string",
-                            "enum": ["primaryKey", "unique", "index"]
-                        },
-                        "minItems": 1,
-                        "uniqueItems": true
+                    "database": {
+                        "type": "object",
+                        "description": "rules of database [primarykey, unique, index]",
+                        "properties": {
+                            "primarykey": {
+                                "type": "boolean",
+                                "description": "field is a primary key"
+                            },
+                            "unique": {
+                                "type": "boolean",
+                                "description": "field is unique"
+                            },
+                            "index": {
+                                "type": "boolean",
+                                "description": "field is a index"
+                            }
+                        }
                     },
-                    "component": {
-                        "type": "string",
-                        "description": "name of component",
-                        "enum": ["number", "uuid", "switch", "text", "password", "dropdown", "calendar", "file"]
+                    "view": {
+                        "type": "object",
+                        "description": "rules of view [name, belongto, uploadto, sortable, asc, desc, globalsearch, secret, hidden, readonly, postonly, autowired, filter, showtime, showicon, uint, float]",
+                        "required": ["name"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "name of view component",
+                                "enum": ["number", "uuid", "switch", "text", "password", "dropdown", "calendar", "file"]
+                            },
+                            "belongto": {
+                                "type": "string",
+                                "description": "used with dropdown",
+                                "examples": ["auth.User.Username"]
+                            },
+                            "uploadto": {
+                                "type": "string",
+                                "description": "used with file",
+                                "examples": ["uploads"]
+                            },
+                            "sortable": {
+                                "type": "boolean",
+                                "description": "field is sortable"
+                            },
+                            "asc": {
+                                "type": "boolean",
+                                "description": "presort asc"
+                            },
+                            "desc": {
+                                "type": "boolean",
+                                "description": "presort desc"
+                            },
+                            "globalsearch": {
+                                "type": "boolean",
+                                "description": "can global search this field"
+                            },
+                            "secret": {
+                                "type": "boolean",
+                                "description": "field is secret (such as a password)"
+                            },
+                            "hidden": {
+                                "type": "boolean",
+                                "description": "field is hidden from datatable list"
+                            },
+                            "readonly": {
+                                "type": "boolean",
+                                "description": "field is readonly"
+                            },
+                            "postonly": {
+                                "type": "boolean",
+                                "description": "field is postonly"
+                            },
+                            "autowired": {
+                                "type": "boolean",
+                                "description": "field is autowired"
+                            },
+                            "filter": {
+                                "type": "boolean",
+                                "description": "used with dropdown"
+                            },
+                            "showtime": {
+                                "type": "boolean",
+                                "description": "used with calendar"
+                            },
+                            "showicon": {
+                                "type": "boolean",
+                                "description": "used with calendar"
+                            },
+                            "uint": {
+                                "type": "boolean",
+                                "description": "used with number"
+                            },
+                            "float": {
+                                "type": "boolean",
+                                "description": "used with number"
+                            }
+                        }
                     },
-                    "componentRules": {
-                        "type": "array",
-                        "description": "component rules",
-                        "items": {
-                            "type": "string"
-                        },
-                        "minItems": 1,
-                        "uniqueItems": true
-                    },
-                    "validateRules": {
-                        "type": "array",
-                        "description": "validate rules",
-                        "items": {
-                            "type": "string"
-                        },
-                        "minItems": 1,
-                        "uniqueItems": true
+                    "validator": {
+                        "type": "object",
+                        "description": "rules of validator [required, email, alphanum, alpha, min, max, len]",
+                        "properties": {
+                            "required": {
+                                "type": "boolean",
+                                "description": "field is required"
+                            },
+                            "email": {
+                                "type": "boolean",
+                                "description": "field is a email"
+                            },
+                            "alphanum": {
+                                "type": "boolean",
+                                "description": "field only contains alpha or number"
+                            },
+                            "alpha": {
+                                "type": "boolean",
+                                "description": "field only contains alpha"
+                            },
+                            "min": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "minimum value of number or length of string"
+                            },
+                            "max": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "description": "maximum value of number or length of string"
+                            },
+                            "len": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "description": "length of string"
+                            }
+                        }
                     }
                 }
             }
