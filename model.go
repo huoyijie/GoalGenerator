@@ -14,10 +14,13 @@ import (
 	"gorm.io/gorm"
 )
 
-const Version string = "0.0.10"
+const Version string = "0.0.11"
 
 //go:embed template/*.tpl
 var tmpl string
+
+//go:embed goal-schema.json
+var schema string
 
 type ILazy interface {
 	Lazy()
@@ -113,7 +116,12 @@ func (m *Model) Valid() error {
 		return err
 	}
 
-	sch, err := jsonschema.Compile("./goal-schema.json")
+	c := jsonschema.NewCompiler()
+	if err := c.AddResource("goal-schema.json", strings.NewReader(schema)); err != nil {
+		return err
+	}
+
+	sch, err := c.Compile("goal-schema.json")
 	if err != nil {
 		return err
 	}
