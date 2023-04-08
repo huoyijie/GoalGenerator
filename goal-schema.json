@@ -1,8 +1,10 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://github.com/huoyijie/GoalGenerator",
+    "$id": "https://cdn.huoyijie.cn/uploads/2023/04/goal-schema.json",
+    "$schema": "https://json-schema.org/draft-07/schema",
     "title": "GoalGenerator Schema",
+    "description": "Define a model with CRUD required",
     "type": "object",
+    "required": ["package", "name", "fields"],
     "properties": {
         "package": {
             "type": "string",
@@ -15,25 +17,30 @@
         "storageRules": {
             "type": "array",
             "description": "storage rules",
-            "allOf": [{
+            "items": {
                 "type": "string",
                 "enum": ["embeddingBase"]
-            }]
+            },
+            "minItems": 1,
+            "uniqueItems": true
         },
         "componentRules": {
             "type": "array",
             "description": "component rules",
-            "allOf": [{
+            "items": {
                 "type": "string",
                 "enum": ["lazy"]
-            }]
+            },
+            "minItems": 1,
+            "uniqueItems": true
         },
         "fields": {
             "type": "array",
             "description": "fields of type",
-            "allOf": [{
+            "items": {
                 "type": "object",
                 "description": "properties of field",
+                "required": ["name", "component"],
                 "properties": {
                     "name": {
                         "type": "string",
@@ -42,10 +49,12 @@
                     "storageRules": {
                         "type": "array",
                         "description": "storage rules",
-                        "allOf": [{
+                        "items": {
                             "type": "string",
                             "enum": ["primaryKey", "unique", "index"]
-                        }]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
                     },
                     "component": {
                         "type": "string",
@@ -55,19 +64,23 @@
                     "componentRules": {
                         "type": "array",
                         "description": "component rules",
-                        "allOf": [{
+                        "items": {
                             "type": "string"
-                        }]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
                     },
                     "validateRules": {
                         "type": "array",
                         "description": "validate rules",
-                        "allOf": [{
+                        "items": {
                             "type": "string"
-                        }]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
                     }
                 }
-            }]
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ import (
 func TestOutput(t *testing.T) {
 	m := &Model{
 		Package: "auth",
-		Name: "Role",
+		Name:    "Role",
 		StorageRules: []StorageRule{
 			STORAGE_RULE_EMBEDDING_BASE,
 		},

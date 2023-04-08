@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://cdn.huoyijie.cn/uploads/2023/04/goal-schema.json
 package: auth
 name: User
 storageRules:
