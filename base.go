@@ -5,16 +5,9 @@ import (
 	"time"
 )
 
-type ILazy interface {
+type Lazy interface {
 	Lazy()
 }
-
-type Lazy struct{}
-
-// Lazy implements ILazy
-func (*Lazy) Lazy() {}
-
-var _ ILazy = (*Lazy)(nil)
 
 type Base struct {
 	ID        uint           `gorm:"primarykey" goal:"<number>primary,sortable,asc,uint"`

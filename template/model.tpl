@@ -6,9 +6,12 @@ import ({{range .Imports}}
     {{.}}{{end}}
 )
 {{end}}
-type {{.Name}} struct { {{if .Lazy}}
-    goalgenerator.Lazy{{end}}{{if .EmbeddingBase}}
+type {{.Name}} struct { {{if .EmbeddingBase}}
     goalgenerator.Base{{end}}
 {{range .Fields}}
     {{.Name}} {{.Type}} `{{.Tag}}`{{end}}
 }
+{{if .Lazy}}
+func (*{{.Name}}) Lazy() {}
+var _ goalgenerator.Lazy = (*{{.Name}})(nil)
+{{end}}
