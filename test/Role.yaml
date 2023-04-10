@@ -3,15 +3,7 @@ package: auth
 name: Role
 database:
   embeddingbase: true
-view:
-  lazy: true
 fields:
-  - name: ID
-    database:
-      primarykey: true
-    view:
-      name: number
-      sortable: true
   - name: Name
     database:
       unique: true

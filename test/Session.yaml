@@ -1,14 +1,9 @@
 # yaml-language-server: $schema=../goal-schema.json
 package: auth
 name: Session
+database:
+  embeddingbase: true
 fields:
-  - name: ID
-    database:
-      primarykey: true
-    view:
-      name: number
-      uint: true
-      hidden: true
   - name: Key
     database:
       unique: true

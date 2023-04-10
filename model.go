@@ -11,10 +11,9 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"golang.org/x/mod/modfile"
 	"gopkg.in/yaml.v3"
-	"gorm.io/gorm"
 )
 
-const Version string = "0.0.12"
+const Version string = "0.0.13"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -22,22 +21,8 @@ var tmpl string
 //go:embed goal-schema.json
 var schema string
 
-type ILazy interface {
-	Lazy()
-}
-
-type Lazy struct{}
-
-// Lazy implements ILazy
-func (*Lazy) Lazy() {}
-
-var _ ILazy = (*Lazy)(nil)
-
-type Base = gorm.Model
-
-type IValid interface {
-	Valid() error
-}
+//go:embed go.mod
+var goMod []byte
 
 func GetMoudlePath() (pkgPath string) {
 	goModBytes, err := os.ReadFile("go.mod")
@@ -84,7 +69,7 @@ func (m *Model) Gen() error {
 
 func (m *Model) Imports() (imports []string) {
 	if m.EmbeddingBase() || m.Lazy() {
-		imports = append(imports, fmt.Sprintf(`"%s"`, GetMoudlePath()))
+		imports = append(imports, fmt.Sprintf(`"%s"`, modfile.ModulePath(goMod)))
 	}
 	for _, f := range m.Fields {
 		if t := f.Type(); t == "time.Time" {

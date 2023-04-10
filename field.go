@@ -86,7 +86,7 @@ func (f *Field) Tag() (tag string) {
 			if hasPrev {
 				sb.WriteRune(',')
 			}
-			sb.WriteString("primaryKey")
+			sb.WriteString("primarykey")
 			hasPrev = true
 		}
 		if unique {
