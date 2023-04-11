@@ -10,6 +10,8 @@ fields:
     view:
       name: text
       sortable: true
+      globalsearch: true
+      filter: true
     validator:
       required: true
       alphanum: true
@@ -29,15 +31,18 @@ fields:
     view:
       name: number
       uint: true
+      autowired: true
   - name: Role
     view:
       name: dropdown
       belongto: Role.Name
+      filter: true
     validator:
       required: true
   - name: Avatar
     view:
       name: file
       uploadto: uploads
+      filter: true
     validator:
       required: true

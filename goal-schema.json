@@ -20,7 +20,8 @@
             "properties": {
                 "embeddingbase": {
                     "type": "boolean",
-                    "description": "embedding base for (ID, CreatedAt, UpdateAt...)"
+                    "description": "embedding base for (ID, CreatedAt, UpdateAt...)",
+                    "examples": [true]
                 }
             }
         },
@@ -30,7 +31,8 @@
             "properties": {
                 "lazy": {
                     "type": "boolean",
-                    "description": "lazy load for datatable pagination"
+                    "description": "lazy load for datatable pagination",
+                    "examples": [true]
                 }
             }
         },
@@ -52,15 +54,18 @@
                         "properties": {
                             "primarykey": {
                                 "type": "boolean",
-                                "description": "field is a primary key"
+                                "description": "field is a primary key",
+                                "examples": [true]
                             },
                             "unique": {
                                 "type": "boolean",
-                                "description": "field is unique"
+                                "description": "field is unique",
+                                "examples": [true]
                             },
                             "index": {
                                 "type": "boolean",
-                                "description": "field is a index"
+                                "description": "field is a index",
+                                "examples": [true]
                             }
                         }
                     },
@@ -86,59 +91,73 @@
                             },
                             "sortable": {
                                 "type": "boolean",
-                                "description": "field is sortable"
+                                "description": "field is sortable",
+                                "examples": [true]
                             },
                             "asc": {
                                 "type": "boolean",
-                                "description": "presort asc"
+                                "description": "presort asc",
+                                "examples": [true]
                             },
                             "desc": {
                                 "type": "boolean",
-                                "description": "presort desc"
+                                "description": "presort desc",
+                                "examples": [true]
                             },
                             "globalsearch": {
                                 "type": "boolean",
-                                "description": "can global search this field"
+                                "description": "can global search this field",
+                                "examples": [true]
                             },
                             "secret": {
                                 "type": "boolean",
-                                "description": "field is secret (such as a password)"
+                                "description": "field is secret (such as a password)",
+                                "examples": [true]
                             },
                             "hidden": {
                                 "type": "boolean",
-                                "description": "field is hidden from datatable list"
+                                "description": "field is hidden from datatable list",
+                                "examples": [true]
                             },
                             "readonly": {
                                 "type": "boolean",
-                                "description": "field is readonly"
+                                "description": "field is readonly",
+                                "examples": [true]
                             },
                             "postonly": {
                                 "type": "boolean",
-                                "description": "field is postonly"
+                                "description": "field is postonly",
+                                "examples": [true]
                             },
                             "autowired": {
                                 "type": "boolean",
-                                "description": "field is autowired"
+                                "description": "field is autowired",
+                                "examples": [true]
                             },
                             "filter": {
                                 "type": "boolean",
-                                "description": "used with dropdown"
+                                "description": "filter field",
+                                "examples": [true]
                             },
                             "showtime": {
                                 "type": "boolean",
-                                "description": "used with calendar"
+                                "description": "used with calendar",
+                                "examples": [true]
                             },
                             "showicon": {
                                 "type": "boolean",
-                                "description": "used with calendar"
+                                "description": "used with calendar",
+                                "examples": [true]
                             },
                             "uint": {
                                 "type": "boolean",
-                                "description": "used with number"
+                                "description": "used with number",
+                                "examples": [true]
                             },
                             "float": {
                                 "type": "boolean",
-                                "description": "used with number"
+                                "description": "used with number",
+                                "examples": [true]
                             }
                         }
                     },
@@ -148,34 +167,41 @@
                         "properties": {
                             "required": {
                                 "type": "boolean",
-                                "description": "field is required"
+                                "description": "field is required",
+                                "examples": [true]
                             },
                             "email": {
                                 "type": "boolean",
-                                "description": "field is a email"
+                                "description": "field is a email",
+                                "examples": [true]
                             },
                             "alphanum": {
                                 "type": "boolean",
-                                "description": "field only contains alpha or number"
+                                "description": "field only contains alpha or number",
+                                "examples": [true]
                             },
                             "alpha": {
                                 "type": "boolean",
-                                "description": "field only contains alpha"
+                                "description": "field only contains alpha",
+                                "examples": [true]
                             },
                             "min": {
                                 "type": "integer",
                                 "minimum": 0,
-                                "description": "minimum value of number or length of string"
+                                "description": "minimum value of number or length of string",
+                                "examples": [0]
                             },
                             "max": {
                                 "type": "integer",
                                 "exclusiveMinimum": 0,
-                                "description": "maximum value of number or length of string"
+                                "description": "maximum value of number or length of string",
+                                "examples": [100]
                             },
                             "len": {
                                 "type": "integer",
                                 "exclusiveMinimum": 0,
-                                "description": "length of string"
+                                "description": "length of string",
+                                "examples": [20]
                             }
                         }
                     }

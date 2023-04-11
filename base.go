@@ -10,7 +10,7 @@ type Lazy interface {
 }
 
 type Base struct {
-	ID        uint           `gorm:"primarykey" goal:"<number>primary,sortable,asc,uint"`
+	ID        uint           `gorm:"primarykey" goal:"<number>primary,sortable,asc,filter,uint"`
 	CreatedAt time.Time      `goal:"<calendar>autowired"`
 	UpdatedAt time.Time      `goal:"<calendar>autowired"`
 	DeletedAt gorm.DeletedAt `gorm:"index" goal:"<calendar>autowired"`
