@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../goal-schema.json
+# yaml-language-server: $schema=../schema.json
 package: auth
 name: User
 database:
@@ -8,10 +8,11 @@ fields:
     database:
       unique: true
     view:
-      name: text
-      sortable: true
-      globalsearch: true
-      filter: true
+      text: true
+      base:
+        sortable: true
+        globalsearch: true
+        filter: true
     validator:
       required: true
       alphanum: true
@@ -21,28 +22,34 @@ fields:
     database:
       unique: true
     view:
-      name: text
-      sortable: true
+      password: true
+      base:
+        sortable: true
     validator:
       required: true
       alphanum: true
       min: 8
   - name: RoleID
     view:
-      name: number
-      uint: true
-      autowired: true
+      number:
+        uint: true
+      base:
+        autowired: true
   - name: Role
     view:
-      name: dropdown
-      belongto: Role.Name
-      filter: true
+      dropdown:
+        belongto:
+          name: Role
+          field: Name
+      base:
+        filter: true
     validator:
       required: true
   - name: Avatar
     view:
-      name: file
-      uploadto: uploads
-      filter: true
+      file:
+        uploadto: uploads
+      base:
+        filter: true
     validator:
       required: true

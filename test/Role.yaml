@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../goal-schema.json
+# yaml-language-server: $schema=../schema.json
 package: auth
 name: Role
 database:
@@ -8,10 +8,11 @@ fields:
     database:
       unique: true
     view:
-      name: text
-      sortable: true
-      globalsearch: true
-      filter: true
+      text: true
+      base:
+        sortable: true
+        globalsearch: true
+        filter: true
     validator:
       required: true
       alphanum: true

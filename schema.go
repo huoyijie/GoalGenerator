@@ -7,22 +7,33 @@ import (
 	"os"
 	"strings"
 	"text/template"
+	"unicode"
 
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"golang.org/x/mod/modfile"
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.16"
+const Version string = "0.0.17"
 
 //go:embed template/*.tpl
 var tmpl string
 
-//go:embed goal-schema.json
+//go:embed schema.json
 var schema string
 
 //go:embed go.mod
 var goMod []byte
+
+type IValid interface {
+	Valid() error
+}
+
+func ToLowerFirstLetter(str string) string {
+	a := []rune(str)
+	a[0] = unicode.ToLower(a[0])
+	return string(a)
+}
 
 func GetMoudlePath() (pkgPath string) {
 	goModBytes, err := os.ReadFile("go.mod")
@@ -44,6 +55,15 @@ type Model struct {
 		Lazy bool `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 	Fields []Field `yaml:",omitempty"`
+}
+
+func (m *Model) Dropdowns() (fields []Field) {
+	for _, f := range m.Fields {
+		if f.DropdownStrings() || f.DropdownInts() || f.DropdownUints() || f.DropdownFloats() || f.DropdownDynamicStrings() || f.DropdownDynamicInts() || f.DropdownDynamicUints() || f.DropdownDynamicFloats() {
+			fields = append(fields, f)
+		}
+	}
+	return
 }
 
 func (m *Model) Version() string {
@@ -69,7 +89,7 @@ func (m *Model) Gen() error {
 
 func (m *Model) Imports() (imports []string) {
 	if m.EmbeddingBase() || m.Lazy() {
-		imports = append(imports, fmt.Sprintf(`"%s"`, modfile.ModulePath(goMod)))
+		imports = append(imports, fmt.Sprintf(`"%s/model"`, modfile.ModulePath(goMod)))
 	}
 	for _, f := range m.Fields {
 		if t := f.Type(); t == "time.Time" {
@@ -102,11 +122,11 @@ func (m *Model) Valid() error {
 	}
 
 	c := jsonschema.NewCompiler()
-	if err := c.AddResource("goal-schema.json", strings.NewReader(schema)); err != nil {
+	if err := c.AddResource("schema.json", strings.NewReader(schema)); err != nil {
 		return err
 	}
 
-	sch, err := c.Compile("goal-schema.json")
+	sch, err := c.Compile("schema.json")
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,390 @@
+{
+  "$id": "https://raw.githubusercontent.com/huoyijie/GoalGenerator/master/schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "GoalGenerator Schema",
+  "description": "Define a model with CRUD required",
+  "type": "object",
+  "required": ["package", "name", "fields"],
+  "additionalProperties": false,
+  "properties": {
+    "package": {
+      "type": "string",
+      "description": "name of package"
+    },
+    "name": {
+      "type": "string",
+      "description": "name of type"
+    },
+    "database": {
+      "type": "object",
+      "description": "rules of database [embeddingbase]",
+      "additionalProperties": false,
+      "properties": {
+        "embeddingbase": {
+          "type": "boolean",
+          "description": "embedding base for (ID, CreatedAt, UpdateAt...)",
+          "examples": [true]
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "description": "rules of view [lazy]",
+      "additionalProperties": false,
+      "properties": {
+        "lazy": {
+          "type": "boolean",
+          "description": "lazy load for datatable pagination",
+          "examples": [true]
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "fields of type",
+      "items": {
+        "type": "object",
+        "description": "properties of field [name, database, view, validator]",
+        "required": ["name", "view"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of field"
+          },
+          "database": {
+            "type": "object",
+            "description": "rules of database [primarykey, unique, index]",
+            "additionalProperties": false,
+            "properties": {
+              "primarykey": {
+                "type": "boolean",
+                "description": "field is a primary key",
+                "examples": [true]
+              },
+              "unique": {
+                "type": "boolean",
+                "description": "field is unique",
+                "examples": [true]
+              },
+              "index": {
+                "type": "boolean",
+                "description": "field is a index",
+                "examples": [true]
+              }
+            }
+          },
+          "view": {
+            "type": "object",
+            "description": "rules of components [base, number, uuid, switch, text, password, dropdown, calendar, file]",
+            "maxProperties": 2,
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "base": {
+                "type": "object",
+                "description": "base rules of component",
+                "additionalProperties": false,
+                "properties": {
+                  "readonly": {
+                    "type": "boolean",
+                    "description": "field is readonly",
+                    "examples": [true]
+                  },
+                  "postonly": {
+                    "type": "boolean",
+                    "description": "field is postonly",
+                    "examples": [true]
+                  },
+                  "sortable": {
+                    "type": "boolean",
+                    "description": "field is sortable",
+                    "examples": [true]
+                  },
+                  "asc": {
+                    "type": "boolean",
+                    "description": "presort asc",
+                    "examples": [true]
+                  },
+                  "desc": {
+                    "type": "boolean",
+                    "description": "presort desc",
+                    "examples": [true]
+                  },
+                  "globalsearch": {
+                    "type": "boolean",
+                    "description": "can global search this field",
+                    "examples": [true]
+                  },
+                  "filter": {
+                    "type": "boolean",
+                    "description": "filter field",
+                    "examples": [true]
+                  },
+                  "hidden": {
+                    "type": "boolean",
+                    "description": "field is hidden from datatable list",
+                    "examples": [true]
+                  },
+                  "secret": {
+                    "type": "boolean",
+                    "description": "field is secret (such as a password)",
+                    "examples": [true]
+                  },
+                  "autowired": {
+                    "type": "boolean",
+                    "description": "field is autowired",
+                    "examples": [true]
+                  }
+                }
+              },
+              "uuid": {
+                "type": "boolean",
+                "description": "uuid",
+                "examples": [true]
+              },
+              "text": {
+                "type": "boolean",
+                "description": "text",
+                "examples": [true]
+              },
+              "switch": {
+                "type": "boolean",
+                "description": "switch",
+                "examples": [true]
+              },
+              "password": {
+                "type": "boolean",
+                "description": "password",
+                "examples": [true]
+              },
+              "number": {
+                "type": "object",
+                "description": "number",
+                "additionalProperties": false,
+                "properties": {
+                  "showbuttons": {
+                    "type": "boolean",
+                    "description": "show buttons",
+                    "examples": [true]
+                  },
+                  "uint": {
+                    "type": "boolean",
+                    "description": "uint",
+                    "examples": [true]
+                  },
+                  "float": {
+                    "type": "boolean",
+                    "description": "float",
+                    "examples": [true]
+                  },
+                  "min": {
+                    "type": "integer",
+                    "description": "min value",
+                    "examples": [0]
+                  },
+                  "max": {
+                    "type": "integer",
+                    "description": "max value",
+                    "examples": [100]
+                  }
+                }
+              },
+              "file": {
+                "type": "object",
+                "description": "file upload",
+                "required": ["uploadto"],
+                "additionalProperties": false,
+                "properties": {
+                  "uploadto": {
+                    "type": "string",
+                    "description": "file upload dir",
+                    "examples": ["uploads"]
+                  }
+                }
+              },
+              "dropdown": {
+                "type": "object",
+                "description": "dropdown",
+                "maxProperties": 1,
+                "minProperties": 1,
+                "additionalProperties": false,
+                "properties": {
+                  "dynamicstrings": {
+                    "type": "boolean",
+                    "description": "custom strings by code",
+                    "examples": [true]
+                  },
+                  "dynamicints": {
+                    "type": "boolean",
+                    "description": "custom ints by code",
+                    "examples": [true]
+                  },
+                  "dynamicuints": {
+                    "type": "boolean",
+                    "description": "custom uints by code",
+                    "examples": [true]
+                  },
+                  "dynamicfloats": {
+                    "type": "boolean",
+                    "description": "custom floats by code",
+                    "examples": [true]
+                  },
+                  "strings": {
+                    "type": "array",
+                    "description": "array of string",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "examples": [["one", "two"]]
+                  },
+                  "ints": {
+                    "type": "array",
+                    "description": "array of int",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "minItems": 1,
+                    "examples": [[-1, 2]]
+                  },
+                  "uints": {
+                    "type": "array",
+                    "description": "array of uint",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "minItems": 1,
+                    "examples": [[1, 2]]
+                  },
+                  "floats": {
+                    "type": "array",
+                    "description": "array of float",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 1,
+                    "examples": [[1.1, 3.14]]
+                  },
+                  "belongto": {
+                    "type": "object",
+                    "description": "belong to another model",
+                    "required": ["name", "field"],
+                    "maxProperties": 3,
+                    "additionalProperties": false,
+                    "properties": {
+                      "pkg": {
+                        "type": "string",
+                        "description": "package of other model",
+                        "examples": ["auth"]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name of other model",
+                        "examples": ["User"]
+                      },
+                      "field": {
+                        "type": "string",
+                        "description": "field of other model",
+                        "examples": ["Username"]
+                      }
+                    }
+                  }
+                }
+              },
+              "calendar": {
+                "type": "object",
+                "description": "calendar",
+                "additionalProperties": false,
+                "properties": {
+                  "showtime": {
+                    "type": "boolean",
+                    "description": "show time",
+                    "examples": [true]
+                  },
+                  "showicon": {
+                    "type": "boolean",
+                    "description": "show icon",
+                    "examples": [true]
+                  }
+                }
+              }
+            },
+            "anyOf": [
+              {
+                "required": ["uuid"]
+              },
+              {
+                "required": ["text"]
+              },
+              {
+                "required": ["switch"]
+              },
+              {
+                "required": ["password"]
+              },
+              {
+                "required": ["number"]
+              },
+              {
+                "required": ["file"]
+              },
+              {
+                "required": ["dropdown"]
+              },
+              {
+                "required": ["calendar"]
+              }
+            ]
+          },
+          "validator": {
+            "type": "object",
+            "description": "rules of validator [required, email, alphanum, alpha, min, max, len]",
+            "additionalProperties": false,
+            "properties": {
+              "required": {
+                "type": "boolean",
+                "description": "field is required",
+                "examples": [true]
+              },
+              "email": {
+                "type": "boolean",
+                "description": "field is a email",
+                "examples": [true]
+              },
+              "alphanum": {
+                "type": "boolean",
+                "description": "field only contains alpha or number",
+                "examples": [true]
+              },
+              "alpha": {
+                "type": "boolean",
+                "description": "field only contains alpha",
+                "examples": [true]
+              },
+              "min": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "minimum value of number or length of string",
+                "examples": [0]
+              },
+              "max": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "description": "maximum value of number or length of string",
+                "examples": [100]
+              },
+              "len": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "description": "length of string",
+                "examples": [20]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

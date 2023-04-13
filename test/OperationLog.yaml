@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../schema.json
+package: admin
+name: OperationLog
+database:
+  embeddingbase: true
+view:
+  lazy: true
+fields:
+  - name: UserID
+    database:
+      index: true
+    view:
+      number:
+        uint: true
+      base:
+        hidden: true
+  - name: User
+    view:
+      dropdown:
+        belongto:
+          pkg: auth
+          name: User
+          field: Username
+      base:
+        sortable: true
+        globalsearch: true
+        filter: true
+  - name: Date
+    database:
+      index: true
+    view:
+      calendar:
+        showtime: true
+      base:
+        sortable: true
+        desc: true
+        filter: true
+  - name: IP
+    view:
+      text: true
+      base:
+        filter: true
+  - name: Group
+    view:
+      dropdown:
+        uints:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+      base:
+        filter: true
+  - name: Item
+    view:
+      dropdown:
+        floats:
+          - 2.3
+          - 3.4
+          - 2.7
+          - 4.4
+      base:
+        filter: true
+  - name: Action
+    view:
+      dropdown:
+        dynamicstrings: true
+      base:
+        filter: true
+  - name: ObjectID
+    view:
+      number:
+        uint: true

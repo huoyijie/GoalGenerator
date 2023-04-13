@@ -7,11 +7,28 @@ import ({{range .Imports}}
 )
 {{end}}
 type {{.Name}} struct { {{if .EmbeddingBase}}
-    goalgenerator.Base{{end}}
+    model.Base{{end}}
 {{range .Fields}}
     {{.Name}} {{.Type}} `{{.Tag}}`{{end}}
 }
+{{range .Dropdowns}}{{if .DropdownStrings}}
+func (*{{.Model.Name}}) {{.Name}}Strings() []string {
+    return {{.OptionStrings}}
+}{{end}}{{if .DropdownInts}}
+func (*{{.Model.Name}}) {{.Name}}Ints() []int {
+    return {{.OptionInts}}
+}{{end}}{{if .DropdownUints}}
+func (*{{.Model.Name}}) {{.Name}}Uints() []uint {
+    return {{.OptionUints}}
+}{{end}}{{if .DropdownFloats}}
+func (*{{.Model.Name}}) {{.Name}}Floats() []float64 {
+    return {{.OptionFloats}}
+}{{end}}{{if .DropdownDynamicStrings}}
+// Please implements this method in another file
+// func (*{{.Model.Name}}) {{.Name}}DynamicStrings() []string {
+//     return []string{"some", "custom", "strings"}
+// }{{end}}{{end}}
 {{if .Lazy}}
 func (*{{.Name}}) Lazy() {}
-var _ goalgenerator.Lazy = (*{{.Name}})(nil)
+var _ model.Lazy = (*{{.Name}})(nil)
 {{end}}
