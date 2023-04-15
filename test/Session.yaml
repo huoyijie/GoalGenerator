@@ -3,6 +3,8 @@ package: auth
 name: Session
 database:
   embeddingbase: true
+  tablename: auth_sessions
+  purge: true
 view:
   lazy: true
 fields:

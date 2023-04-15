@@ -3,6 +3,9 @@ package: auth
 name: User
 database:
   embeddingbase: true
+  tablename: auth_users
+view:
+  ctrl: true
 fields:
   - name: Username
     database:

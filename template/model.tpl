@@ -11,7 +11,10 @@ type {{.Name}} struct { {{if .EmbeddingBase}}
 {{range .Fields}}
     {{.Name}} {{.Type}} `{{.Tag}}`{{end}}
 }
-{{range .Dropdowns}}{{if .DropdownStrings}}
+{{if .CustomTableName}}
+func (*{{.Name}}) TableName() string {
+    return "{{.TableName}}"
+}{{end}}{{range .Dropdowns}}{{if .DropdownStrings}}
 func (*{{.Model.Name}}) {{.Name}}Strings() []string {
     return {{.OptionStrings}}
 }{{end}}{{if .DropdownInts}}
@@ -28,7 +31,10 @@ func (*{{.Model.Name}}) {{.Name}}Floats() []float64 {
 // func (*{{.Model.Name}}) {{.Name}}DynamicStrings() []string {
 //     return []string{"some", "custom", "strings"}
 // }{{end}}{{end}}
-{{if .Lazy}}
+{{if .Purge}}
+func (*{{.Name}}) Purge() {}
+{{end}}{{if .Lazy}}
 func (*{{.Name}}) Lazy() {}
-var _ model.Lazy = (*{{.Name}})(nil)
+{{end}}{{if .Ctrl}}
+func (*{{.Name}}) Ctrl() {}
 {{end}}

@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.17"
+const Version string = "0.0.18"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -49,10 +49,13 @@ type Model struct {
 	Package,
 	Name string `yaml:",omitempty"`
 	Database *struct {
-		EmbeddingBase bool `yaml:",omitempty"`
+		EmbeddingBase,
+		Purge bool `yaml:",omitempty"`
+		TableName string `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 	View *struct {
-		Lazy bool `yaml:",omitempty"`
+		Lazy,
+		Ctrl bool `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 	Fields []Field `yaml:",omitempty"`
 }
@@ -88,7 +91,7 @@ func (m *Model) Gen() error {
 }
 
 func (m *Model) Imports() (imports []string) {
-	if m.EmbeddingBase() || m.Lazy() {
+	if m.EmbeddingBase() {
 		imports = append(imports, fmt.Sprintf(`"%s/model"`, modfile.ModulePath(goMod)))
 	}
 	for _, f := range m.Fields {
@@ -105,8 +108,24 @@ func (m *Model) EmbeddingBase() bool {
 	return m.Database != nil && m.Database.EmbeddingBase
 }
 
+func (m *Model) CustomTableName() bool {
+	return m.Database != nil && m.Database.TableName != ""
+}
+
+func (m *Model) TableName() string {
+	return m.Database.TableName
+}
+
+func (m *Model) Purge() bool {
+	return m.Database != nil && m.Database.Purge
+}
+
 func (m *Model) Lazy() bool {
 	return m.View != nil && m.View.Lazy
+}
+
+func (m *Model) Ctrl() bool {
+	return m.View != nil && m.View.Ctrl
 }
 
 // Valid implements IValid

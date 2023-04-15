@@ -3,6 +3,8 @@ package: auth
 name: Role
 database:
   embeddingbase: true
+  tablename: auth_roles
+  purge: true
 fields:
   - name: Name
     database:

@@ -17,24 +17,39 @@
     },
     "database": {
       "type": "object",
-      "description": "rules of database [embeddingbase]",
+      "description": "rules of database [embeddingbase,purge, tablename]",
       "additionalProperties": false,
       "properties": {
         "embeddingbase": {
           "type": "boolean",
           "description": "embedding base for (ID, CreatedAt, UpdateAt...)",
           "examples": [true]
+        },
+        "purge": {
+          "type": "boolean",
+          "description": "delete data permanently",
+          "examples": [true]
+        },
+        "tablename": {
+          "type": "string",
+          "description": "custom name of the table",
+          "examples": ["auth_users"]
         }
       }
     },
     "view": {
       "type": "object",
-      "description": "rules of view [lazy]",
+      "description": "rules of view [lazy,ctrl]",
       "additionalProperties": false,
       "properties": {
         "lazy": {
           "type": "boolean",
           "description": "lazy load for datatable pagination",
+          "examples": [true]
+        },
+        "ctrl": {
+          "type": "boolean",
+          "description": "control which columns of datatable are displayed",
           "examples": [true]
         }
       }

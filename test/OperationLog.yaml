@@ -3,8 +3,11 @@ package: admin
 name: OperationLog
 database:
   embeddingbase: true
+  tablename: admin_oplogs
+  purge: true
 view:
   lazy: true
+  ctrl: true
 fields:
   - name: UserID
     database:
