@@ -6,13 +6,13 @@ import ({{range .Imports}}
     {{.}}{{end}}
 )
 {{end}}
-type {{.Name}} struct { {{if .EmbeddingBase}}
+type {{.Name}} struct {
+{{if .EmbeddingBase}}
     model.Base{{end}}
 {{range .Fields}}
     {{.Name}} {{.Type}} `{{.Tag}}`{{end}}
-}
-{{if .CustomTableName}}
-func (*{{.Name}}) TableName() string {
+}{{if .CustomTableName}}
+func ({{.Name}}) TableName() string {
     return "{{.TableName}}"
 }{{end}}{{range .Dropdowns}}{{if .DropdownStrings}}
 func (*{{.Model.Name}}) {{.Name}}Strings() []string {
