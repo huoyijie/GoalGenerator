@@ -6,6 +6,7 @@ database:
   tablename: auth_users
 view:
   ctrl: true
+  icon: users
 fields:
   - name: Username
     database:

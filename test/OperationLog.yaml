@@ -8,6 +8,7 @@ database:
 view:
   lazy: true
   ctrl: true
+  icon: save
 fields:
   - name: UserID
     database:

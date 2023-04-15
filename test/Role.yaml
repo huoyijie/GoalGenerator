@@ -5,6 +5,8 @@ database:
   embeddingbase: true
   tablename: auth_roles
   purge: true
+view:
+  icon: key
 fields:
   - name: Name
     database:

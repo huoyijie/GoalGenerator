@@ -31,7 +31,10 @@ func (*{{.Model.Name}}) {{.Name}}Floats() []float64 {
 // func (*{{.Model.Name}}) {{.Name}}DynamicStrings() []string {
 //     return []string{"some", "custom", "strings"}
 // }{{end}}{{end}}
-{{if .Purge}}
+
+func (*{{.Name}}) Icon() string {
+    return "{{.Icon}}"
+}{{if .Purge}}
 func (*{{.Name}}) Purge() {}
 {{end}}{{if .Lazy}}
 func (*{{.Name}}) Lazy() {}

@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.19"
+const Version string = "0.0.20"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -56,6 +56,7 @@ type Model struct {
 	View *struct {
 		Lazy,
 		Ctrl bool `yaml:",omitempty"`
+		Icon string `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 	Fields []Field `yaml:",omitempty"`
 }
@@ -121,11 +122,15 @@ func (m *Model) Purge() bool {
 }
 
 func (m *Model) Lazy() bool {
-	return m.View != nil && m.View.Lazy
+	return m.View.Lazy
 }
 
 func (m *Model) Ctrl() bool {
-	return m.View != nil && m.View.Ctrl
+	return m.View.Ctrl
+}
+
+func (m *Model) Icon() string {
+	return m.View.Icon
 }
 
 // Valid implements IValid
