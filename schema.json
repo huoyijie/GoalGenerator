@@ -95,6 +95,7 @@
     "fields": {
       "type": "array",
       "description": "fields of type",
+      "minItems": 1,
       "items": {
         "type": "object",
         "description": "properties of field [name, database, view, validator]",

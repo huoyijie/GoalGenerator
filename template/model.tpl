@@ -58,11 +58,15 @@ func (*{{.Name.Value}}) TranslateName() map[string]string {
 func (*{{.Name.Value}}) TranslateFields() map[string]map[string]string {
     return map[string]map[string]string{
         "en": {
-{{range .Fields}}
+{{if .EmbeddingBase}}
+            "ID": "ID",
+{{end}}{{range .Fields}}
             "{{.Name.Value}}": "{{.Name.En}}",
 {{end}}        },
         "zh_CN": {
-{{range .Fields}}
+{{if .EmbeddingBase}}
+            "ID": "ID",
+{{end}}{{range .Fields}}
             "{{.Name.Value}}": "{{.Name.Zh_CN}}",
 {{end}}        },
     }
