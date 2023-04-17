@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.20"
+const Version string = "0.0.21"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -45,9 +45,20 @@ func GetMoudlePath() (pkgPath string) {
 	return
 }
 
+type Translate struct {
+	En    string `yaml:",omitempty"`
+	Zh_CN string `yaml:"zh_CN,omitempty"`
+}
+
 type Model struct {
-	Package,
-	Name string `yaml:",omitempty"`
+	Package *struct {
+		Value     string `yaml:",omitempty"`
+		Translate `yaml:",inline,omitempty"`
+	} `yaml:",omitempty"`
+	Name *struct {
+		Value     string `yaml:",omitempty"`
+		Translate `yaml:",inline,omitempty"`
+	} `yaml:",omitempty"`
 	Database *struct {
 		EmbeddingBase,
 		Purge bool `yaml:",omitempty"`
@@ -79,9 +90,9 @@ func (m *Model) Gen() error {
 		m.Fields[i].Model = m
 	}
 
-	os.Mkdir(m.Package, os.ModePerm)
+	os.Mkdir(m.Package.Value, os.ModePerm)
 
-	f, err := os.Create(fmt.Sprintf("%s/%s.go", m.Package, m.Name))
+	f, err := os.Create(fmt.Sprintf("%s/%s.go", m.Package.Value, m.Name.Value))
 	if err != nil {
 		return err
 	}

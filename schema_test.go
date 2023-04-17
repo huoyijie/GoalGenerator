@@ -14,7 +14,7 @@ func TestInput(t *testing.T) {
 	if err := yaml.Unmarshal(in, m); err != nil {
 		log.Fatal(err)
 	} else {
-		if m.Name != "User" {
+		if m.Name.Value != "User" {
 			t.Fatal("Unmarshal failed")
 		}
 		if err := m.Valid(); err != nil {
@@ -29,7 +29,7 @@ func TestGenRole(t *testing.T) {
 	if err := yaml.Unmarshal(in, m); err != nil {
 		log.Fatal(err)
 	} else {
-		if m.Name != "Role" {
+		if m.Name.Value != "Role" {
 			t.Fatal("Unmarshal failed")
 		}
 		if err := m.Valid(); err != nil {
@@ -47,7 +47,7 @@ func TestGenUser(t *testing.T) {
 	if err := yaml.Unmarshal(in, m); err != nil {
 		log.Fatal(err)
 	} else {
-		if m.Name != "User" {
+		if m.Name.Value != "User" {
 			t.Fatal("Unmarshal failed")
 		}
 		if err := m.Valid(); err != nil {
@@ -65,7 +65,7 @@ func TestGenSession(t *testing.T) {
 	if err := yaml.Unmarshal(in, m); err != nil {
 		log.Fatal(err)
 	} else {
-		if m.Name != "Session" {
+		if m.Name.Value != "Session" {
 			t.Fatal("Unmarshal failed")
 		}
 		if err := m.Valid(); err != nil {

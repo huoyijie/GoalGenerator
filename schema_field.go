@@ -8,8 +8,11 @@ import (
 )
 
 type Field struct {
-	Model    *Model `yaml:"-"`
-	Name     string `yaml:",omitempty"`
+	Model *Model `yaml:"-"`
+	Name  *struct {
+		Value     string `yaml:",omitempty"`
+		Translate `yaml:",inline,omitempty"`
+	} `yaml:",omitempty"`
 	Database *struct {
 		PrimaryKey,
 		Unique,
@@ -265,7 +268,7 @@ func (f *Field) Tag() (tag string) {
 									if f.Name == "Dropdown" && cf.Name == "BelongTo" {
 										p := e.FieldByName("Pkg").Interface().(string)
 										if p == "" {
-											p = m.Package
+											p = m.Package.Value
 										}
 										n := e.FieldByName("Name").Interface()
 										fn := e.FieldByName("Field").Interface()

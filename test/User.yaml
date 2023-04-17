@@ -1,6 +1,12 @@
 # yaml-language-server: $schema=../schema.json
-package: auth
-name: User
+package:
+  value: auth
+  en: Auth
+  zh_CN: 认证授权
+name:
+  value: User
+  en: User | users
+  zh_CN: 用户
 database:
   embeddingbase: true
   tablename: auth_users
@@ -8,7 +14,10 @@ view:
   ctrl: true
   icon: users
 fields:
-  - name: Username
+  - name:
+      value: Username
+      en: Username
+      zh_CN: 用户名
     database:
       unique: true
     view:
@@ -22,7 +31,10 @@ fields:
       alphanum: true
       min: 3
       max: 40
-  - name: Password
+  - name:
+      value: Password
+      en: Password
+      zh_CN: 密码
     database:
       unique: true
     view:
@@ -33,13 +45,19 @@ fields:
       required: true
       alphanum: true
       min: 8
-  - name: RoleID
+  - name:
+      value: RoleID
+      en: Role ID
+      zh_CN: 角色ID
     view:
       number:
         uint: true
       base:
         autowired: true
-  - name: Role
+  - name:
+      value: Role
+      en: Role
+      zh_CN: 角色
     view:
       dropdown:
         belongto:
@@ -49,7 +67,10 @@ fields:
         filter: true
     validator:
       required: true
-  - name: Avatar
+  - name:
+      value: Avatar
+      en: Avatar
+      zh_CN: 头像
     view:
       file:
         uploadto: uploads
