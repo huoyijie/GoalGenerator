@@ -46,14 +46,30 @@ type Field struct {
 			UploadTo string `yaml:",omitempty"`
 		} `yaml:",omitempty"`
 		Dropdown *struct {
-			DynamicStrings,
-			DynamicInts,
-			DynamicUints,
-			DynamicFloats bool `yaml:",omitempty"`
-			Strings  []string  `yaml:",omitempty"`
-			Ints     []int     `yaml:",omitempty"`
-			Uints    []uint    `yaml:",omitempty"`
-			Floats   []float64 `yaml:",omitempty"`
+			Option *struct {
+				Dynamic *struct {
+					Strings,
+					Ints,
+					Uints,
+					Floats bool `yaml:",omitempty"`
+				} `yaml:",omitempty"`
+				Strings []struct {
+					Value     string `yaml:",omitempty"`
+					Translate `yaml:",inline,omitempty"`
+				} `yaml:",omitempty"`
+				Ints []struct {
+					Value     *int `yaml:",omitempty"`
+					Translate `yaml:",inline,omitempty"`
+				} `yaml:",omitempty"`
+				Uints []struct {
+					Value     *uint `yaml:",omitempty"`
+					Translate `yaml:",inline,omitempty"`
+				} `yaml:",omitempty"`
+				Floats []struct {
+					Value     *float64 `yaml:",omitempty"`
+					Translate `yaml:",inline,omitempty"`
+				} `yaml:",omitempty"`
+			} `yaml:",omitempty"`
 			BelongTo *struct {
 				Pkg,
 				Name,
@@ -122,13 +138,13 @@ func (f *Field) Type() (t string) {
 			} else {
 				t = strings.Join([]string{belongTo.Pkg, belongTo.Name}, ".")
 			}
-		case f.View.Dropdown.DynamicStrings, f.View.Dropdown.Strings != nil:
+		case f.DropdownStrings(), f.DropdownDynamicStrings():
 			t = "string"
-		case f.View.Dropdown.DynamicInts, f.View.Dropdown.Ints != nil:
+		case f.DropdownInts(), f.DropdownDynamicInts():
 			t = "int"
-		case f.View.Dropdown.DynamicUints, f.View.Dropdown.Uints != nil:
+		case f.DropdownUints(), f.DropdownDynamicUints():
 			t = "uint"
-		case f.View.Dropdown.DynamicFloats, f.View.Dropdown.Floats != nil:
+		case f.DropdownFloats(), f.DropdownDynamicFloats():
 			t = "float64"
 		}
 	}
@@ -305,7 +321,10 @@ func (f *Field) Tag() (tag string) {
 }
 
 func (f *Field) DropdownStrings() bool {
-	return f.View.Dropdown != nil && len(f.View.Dropdown.Strings) > 0
+	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Strings) > 0 {
+		return true
+	}
+	return false
 }
 
 func (f *Field) OptionStrings() string {
@@ -313,14 +332,14 @@ func (f *Field) OptionStrings() string {
 		sb := strings.Builder{}
 		sb.WriteString("[]string{")
 		var hasPrev bool
-		for _, option := range f.View.Dropdown.Strings {
+		for _, option := range f.View.Dropdown.Option.Strings {
 			if hasPrev {
 				sb.WriteString(", ")
 			} else {
 				hasPrev = true
 			}
 			sb.WriteRune('"')
-			sb.WriteString(option)
+			sb.WriteString(option.Value)
 			sb.WriteRune('"')
 		}
 		sb.WriteString("}")
@@ -331,7 +350,10 @@ func (f *Field) OptionStrings() string {
 }
 
 func (f *Field) DropdownInts() bool {
-	return f.View.Dropdown != nil && len(f.View.Dropdown.Ints) > 0
+	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Ints) > 0 {
+		return true
+	}
+	return false
 }
 
 func (f *Field) OptionInts() string {
@@ -339,13 +361,13 @@ func (f *Field) OptionInts() string {
 		sb := strings.Builder{}
 		sb.WriteString("[]int{")
 		var hasPrev bool
-		for _, option := range f.View.Dropdown.Ints {
+		for _, option := range f.View.Dropdown.Option.Ints {
 			if hasPrev {
 				sb.WriteString(", ")
 			} else {
 				hasPrev = true
 			}
-			sb.WriteString(fmt.Sprintf("%d", option))
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
 		}
 		sb.WriteString("}")
 		return sb.String()
@@ -355,7 +377,10 @@ func (f *Field) OptionInts() string {
 }
 
 func (f *Field) DropdownUints() bool {
-	return f.View.Dropdown != nil && len(f.View.Dropdown.Uints) > 0
+	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Uints) > 0 {
+		return true
+	}
+	return false
 }
 
 func (f *Field) OptionUints() string {
@@ -363,13 +388,13 @@ func (f *Field) OptionUints() string {
 		sb := strings.Builder{}
 		sb.WriteString("[]uint{")
 		var hasPrev bool
-		for _, option := range f.View.Dropdown.Uints {
+		for _, option := range f.View.Dropdown.Option.Uints {
 			if hasPrev {
 				sb.WriteString(", ")
 			} else {
 				hasPrev = true
 			}
-			sb.WriteString(fmt.Sprintf("%d", option))
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
 		}
 		sb.WriteString("}")
 		return sb.String()
@@ -379,7 +404,10 @@ func (f *Field) OptionUints() string {
 }
 
 func (f *Field) DropdownFloats() bool {
-	return f.View.Dropdown != nil && len(f.View.Dropdown.Floats) > 0
+	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Floats) > 0 {
+		return true
+	}
+	return false
 }
 
 func (f *Field) OptionFloats() string {
@@ -387,13 +415,13 @@ func (f *Field) OptionFloats() string {
 		sb := strings.Builder{}
 		sb.WriteString("[]float64{")
 		var hasPrev bool
-		for _, option := range f.View.Dropdown.Floats {
+		for _, option := range f.View.Dropdown.Option.Floats {
 			if hasPrev {
 				sb.WriteString(", ")
 			} else {
 				hasPrev = true
 			}
-			sb.WriteString(strconv.FormatFloat(option, 'f', -1, 64))
+			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
 		}
 		sb.WriteString("}")
 		return sb.String()
@@ -403,17 +431,29 @@ func (f *Field) OptionFloats() string {
 }
 
 func (f *Field) DropdownDynamicStrings() bool {
-	return f.View.Dropdown != nil && f.View.Dropdown.DynamicStrings
+	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Strings {
+		return true
+	}
+	return false
 }
 
 func (f *Field) DropdownDynamicInts() bool {
-	return f.View.Dropdown != nil && f.View.Dropdown.DynamicInts
+	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Ints {
+		return true
+	}
+	return false
 }
 
 func (f *Field) DropdownDynamicUints() bool {
-	return f.View.Dropdown != nil && f.View.Dropdown.DynamicUints
+	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Uints {
+		return true
+	}
+	return false
 }
 
 func (f *Field) DropdownDynamicFloats() bool {
-	return f.View.Dropdown != nil && f.View.Dropdown.DynamicFloats
+	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Floats {
+		return true
+	}
+	return false
 }

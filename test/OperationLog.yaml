@@ -68,14 +68,14 @@ fields:
       zh_CN: 组
     view:
       dropdown:
-        uints:
-          - 0
-          - 1
-          - 2
-          - 3
-          - 4
-          - 5
-          - 6
+        option:
+          uints:
+            - value: 0
+              en: zero
+              zh_CN: 零
+            - value: 1
+              en: one
+              zh_CN: 一
       base:
         filter: true
   - name:
@@ -84,11 +84,14 @@ fields:
       zh_CN: 项
     view:
       dropdown:
-        floats:
-          - 2.3
-          - 3.4
-          - 2.7
-          - 4.4
+        option:
+          floats:
+            - value: 2.3
+              en: '2dot3'
+              zh_CN: '2点3'
+            - value: 3.4
+              en: '3dot4'
+              zh_CN: '3点4'
       base:
         filter: true
   - name:
@@ -97,7 +100,9 @@ fields:
       zh_CN: 动作
     view:
       dropdown:
-        dynamicstrings: true
+        option:
+          dynamic:
+            strings: true
       base:
         filter: true
   - name:

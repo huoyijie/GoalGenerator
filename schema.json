@@ -280,62 +280,132 @@
                 "minProperties": 1,
                 "additionalProperties": false,
                 "properties": {
-                  "dynamicstrings": {
-                    "type": "boolean",
-                    "description": "custom strings by code",
-                    "examples": [true]
-                  },
-                  "dynamicints": {
-                    "type": "boolean",
-                    "description": "custom ints by code",
-                    "examples": [true]
-                  },
-                  "dynamicuints": {
-                    "type": "boolean",
-                    "description": "custom uints by code",
-                    "examples": [true]
-                  },
-                  "dynamicfloats": {
-                    "type": "boolean",
-                    "description": "custom floats by code",
-                    "examples": [true]
-                  },
-                  "strings": {
-                    "type": "array",
-                    "description": "array of string",
-                    "items": {
-                      "type": "string"
-                    },
-                    "minItems": 1,
-                    "examples": [["one", "two"]]
-                  },
-                  "ints": {
-                    "type": "array",
-                    "description": "array of int",
-                    "items": {
-                      "type": "integer"
-                    },
-                    "minItems": 1,
-                    "examples": [[-1, 2]]
-                  },
-                  "uints": {
-                    "type": "array",
-                    "description": "array of uint",
-                    "items": {
-                      "type": "integer",
-                      "minimum": 0
-                    },
-                    "minItems": 1,
-                    "examples": [[1, 2]]
-                  },
-                  "floats": {
-                    "type": "array",
-                    "description": "array of float",
-                    "items": {
-                      "type": "number"
-                    },
-                    "minItems": 1,
-                    "examples": [[1.1, 3.14]]
+                  "option": {
+                    "type": "object",
+                    "description": "options of dropdown",
+                    "maxProperties": 1,
+                    "minProperties": 1,
+                    "additionalProperties": false,
+                    "properties": {
+                      "dynamic": {
+                        "type": "object",
+                        "description": "options are dynamic",
+                        "maxProperties": 1,
+                        "minProperties": 1,
+                        "additionalProperties": false,
+                        "properties": {
+                          "strings": {
+                            "type": "boolean",
+                            "description": "custom strings by code",
+                            "examples": [true]
+                          },
+                          "ints": {
+                            "type": "boolean",
+                            "description": "custom ints by code",
+                            "examples": [true]
+                          },
+                          "uints": {
+                            "type": "boolean",
+                            "description": "custom uints by code",
+                            "examples": [true]
+                          },
+                          "floats": {
+                            "type": "boolean",
+                            "description": "custom floats by code",
+                            "examples": [true]
+                          }
+                        }
+                      },
+                      "strings": {
+                        "type": "array",
+                        "description": "string options",
+                        "items": {
+                          "type": "object",
+                          "description": "option",
+                          "additionalProperties": false,
+                          "required": ["value", "en"],
+                          "properties": {
+                            "value": {
+                              "type": "string"
+                            },
+                            "en": {
+                              "type": "string"
+                            },
+                            "zh_CN": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 1
+                      },
+                      "ints": {
+                        "type": "array",
+                        "description": "int options",
+                        "items": {
+                          "type": "object",
+                          "description": "option",
+                          "additionalProperties": false,
+                          "required": ["value", "en"],
+                          "properties": {
+                            "value": {
+                              "type": "integer"
+                            },
+                            "en": {
+                              "type": "string"
+                            },
+                            "zh_CN": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 1
+                      },
+                      "uints": {
+                        "type": "array",
+                        "description": "uint options",
+                        "items": {
+                          "type": "object",
+                          "description": "option",
+                          "additionalProperties": false,
+                          "required": ["value", "en"],
+                          "properties": {
+                            "value": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "en": {
+                              "type": "string"
+                            },
+                            "zh_CN": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 1
+                      },
+                      "floats": {
+                        "type": "array",
+                        "description": "float options",
+                        "items": {
+                          "type": "object",
+                          "description": "option",
+                          "additionalProperties": false,
+                          "required": ["value", "en"],
+                          "properties": {
+                            "value": {
+                              "type": "number"
+                            },
+                            "en": {
+                              "type": "string"
+                            },
+                            "zh_CN": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 1
+                      }
+                    }
                   },
                   "belongto": {
                     "type": "object",
