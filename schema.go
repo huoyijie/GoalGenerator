@@ -1,8 +1,10 @@
 package goalgenerator
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
+	"go/format"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.27"
+const Version string = "0.0.28"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -99,7 +101,21 @@ func (m *Model) Gen() error {
 
 	t := template.Must(template.New("").Parse(tmpl))
 
-	return t.Execute(f, m)
+	var buf bytes.Buffer
+	if err = t.Execute(&buf, m); err != nil {
+		return err
+	}
+
+	p, err := format.Source(buf.Bytes())
+	if err != nil {
+		return err
+	}
+
+	if _, err = f.Write(p); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m *Model) Imports() (imports []string) {
