@@ -349,6 +349,52 @@ func (f *Field) OptionStrings() string {
 	}
 }
 
+func (f *Field) OptionStringLabels() string {
+	if f.DropdownStrings() {
+		sb := strings.Builder{}
+		sb.WriteString("map[string]map[string]string{")
+		sb.WriteString(` "en": {`)
+		var hasPrev bool
+		for _, option := range f.View.Dropdown.Option.Strings {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(option.Value)
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.En)
+			sb.WriteRune('"')
+		}
+		sb.WriteString(`}, "zh_CN": {`)
+
+		hasPrev = false
+		for _, option := range f.View.Dropdown.Option.Strings {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(option.Value)
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.Zh_CN)
+			sb.WriteRune('"')
+		}
+		sb.WriteString("}")
+
+		sb.WriteString("}")
+		return sb.String()
+	} else {
+		return ""
+	}
+}
+
 func (f *Field) DropdownInts() bool {
 	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Ints) > 0 {
 		return true
@@ -369,6 +415,52 @@ func (f *Field) OptionInts() string {
 			}
 			sb.WriteString(fmt.Sprintf("%d", *option.Value))
 		}
+		sb.WriteString("}")
+		return sb.String()
+	} else {
+		return ""
+	}
+}
+
+func (f *Field) OptionIntLabels() string {
+	if f.DropdownInts() {
+		sb := strings.Builder{}
+		sb.WriteString("map[string]map[string]string{")
+		sb.WriteString(` "en": {`)
+		var hasPrev bool
+		for _, option := range f.View.Dropdown.Option.Ints {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.En)
+			sb.WriteRune('"')
+		}
+		sb.WriteString(`}, "zh_CN": {`)
+
+		hasPrev = false
+		for _, option := range f.View.Dropdown.Option.Ints {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.Zh_CN)
+			sb.WriteRune('"')
+		}
+		sb.WriteString("}")
+
 		sb.WriteString("}")
 		return sb.String()
 	} else {
@@ -403,6 +495,52 @@ func (f *Field) OptionUints() string {
 	}
 }
 
+func (f *Field) OptionUintLabels() string {
+	if f.DropdownUints() {
+		sb := strings.Builder{}
+		sb.WriteString("map[string]map[string]string{")
+		sb.WriteString(` "en": {`)
+		var hasPrev bool
+		for _, option := range f.View.Dropdown.Option.Uints {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.En)
+			sb.WriteRune('"')
+		}
+		sb.WriteString(`}, "zh_CN": {`)
+
+		hasPrev = false
+		for _, option := range f.View.Dropdown.Option.Uints {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(fmt.Sprintf("%d", *option.Value))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.Zh_CN)
+			sb.WriteRune('"')
+		}
+		sb.WriteString("}")
+
+		sb.WriteString("}")
+		return sb.String()
+	} else {
+		return ""
+	}
+}
+
 func (f *Field) DropdownFloats() bool {
 	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Floats) > 0 {
 		return true
@@ -423,6 +561,52 @@ func (f *Field) OptionFloats() string {
 			}
 			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
 		}
+		sb.WriteString("}")
+		return sb.String()
+	} else {
+		return ""
+	}
+}
+
+func (f *Field) OptionFloatLabels() string {
+	if f.DropdownFloats() {
+		sb := strings.Builder{}
+		sb.WriteString("map[string]map[string]string{")
+		sb.WriteString(` "en": {`)
+		var hasPrev bool
+		for _, option := range f.View.Dropdown.Option.Floats {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.En)
+			sb.WriteRune('"')
+		}
+		sb.WriteString(`}, "zh_CN": {`)
+
+		hasPrev = false
+		for _, option := range f.View.Dropdown.Option.Floats {
+			if hasPrev {
+				sb.WriteString(", ")
+			} else {
+				hasPrev = true
+			}
+			sb.WriteRune('"')
+			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
+			sb.WriteRune('"')
+			sb.WriteString(": ")
+			sb.WriteRune('"')
+			sb.WriteString(option.Zh_CN)
+			sb.WriteRune('"')
+		}
+		sb.WriteString("}")
+
 		sb.WriteString("}")
 		return sb.String()
 	} else {
