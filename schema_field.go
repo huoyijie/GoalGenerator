@@ -281,32 +281,56 @@ func (f *Field) Tag() (tag string) {
 									sb.WriteString(fmt.Sprintf("%v", e.Interface()))
 									hasPrev = true
 								case reflect.Struct:
-									if f.Name == "Dropdown" && cf.Name == "BelongTo" {
-										p := e.FieldByName("Pkg").Interface().(string)
-										if p == "" {
-											p = m.Package.Value
+									if f.Name == "Dropdown" {
+										switch cf.Name {
+										case "BelongTo":
+											p := e.FieldByName("Pkg").Interface().(string)
+											if p == "" {
+												p = m.Package.Value
+											}
+											n := e.FieldByName("Name").Interface()
+											fn := e.FieldByName("Field").Interface()
+											if hasPrev {
+												sb.WriteRune(',')
+											}
+											sb.WriteString(ToLowerFirstLetter(cf.Name))
+											sb.WriteRune('=')
+											sb.WriteString(fmt.Sprintf("%s.%s.%s", p, n, fn))
+											hasPrev = true
+										case "Option":
+											ot := reflect.TypeOf(e.Interface())
+											for i := 0; i < ot.NumField(); i++ {
+												of := ot.Field(i)
+												oVal := e.FieldByName(of.Name)
+												switch oVal.Kind() {
+												case reflect.Slice:
+													if !oVal.IsZero() && oVal.Len() > 0 {
+														if hasPrev {
+															sb.WriteRune(',')
+														}
+														sb.WriteString(ToLowerFirstLetter(of.Name))
+														hasPrev = true
+													}
+												case reflect.Pointer: // dynamic
+													if !oVal.IsNil() {
+														dt := reflect.TypeOf(oVal.Elem().Interface())
+														for i := 0; i < dt.NumField(); i++ {
+															df := dt.Field(i)
+															dVal := oVal.Elem().FieldByName(df.Name)
+															if dVal.Bool() {
+																if hasPrev {
+																	sb.WriteRune(',')
+																}
+																sb.WriteString("dynamic")
+																sb.WriteString(df.Name)
+																hasPrev = true
+															}
+														}
+													}
+												}
+											}
 										}
-										n := e.FieldByName("Name").Interface()
-										fn := e.FieldByName("Field").Interface()
-										if hasPrev {
-											sb.WriteRune(',')
-										}
-										sb.WriteString(ToLowerFirstLetter(cf.Name))
-										sb.WriteRune('=')
-										sb.WriteString(fmt.Sprintf("%s.%s.%s", p, n, fn))
-										hasPrev = true
 									}
-								}
-							}
-						case reflect.Slice:
-							if !cfVal.IsZero() && cfVal.Len() > 0 {
-								if f.Name == "Dropdown" {
-									if hasPrev {
-										sb.WriteRune(',')
-									}
-									sb.WriteString(ToLowerFirstLetter(cf.Name))
-									//cfVal.Interface()
-									hasPrev = true
 								}
 							}
 						}
