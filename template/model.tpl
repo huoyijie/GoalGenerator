@@ -111,3 +111,13 @@ func (*{{.Name.Value}}) TranslateFields() map[string]map[string]string {
 {{end}}        },
     }
 }
+
+func (m *{{.Name.Value}}) TranslateOptions() map[string]map[string]map[string]string {
+    t := map[string]map[string]map[string]string{"en": {}, "zh_CN": {},}
+{{range .Dropdowns}}
+    t{{.Name.Value}} := m.{{.DropdownTranslateOptionMethod}}()
+    t["en"]["{{.Name.Value}}"] = t{{.Name.Value}}["en"]
+    t["zh_CN"]["{{.Name.Value}}"] = t{{.Name.Value}}["zh_CN"]
+{{end}}
+    return t
+}

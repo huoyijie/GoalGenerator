@@ -665,3 +665,23 @@ func (f *Field) DropdownDynamicFloats() bool {
 	}
 	return false
 }
+
+func (f *Field) DropdownTranslateOptionMethod() string {
+	sb := strings.Builder{}
+	sb.WriteString("Translate")
+	sb.WriteString(f.Name.Value)
+	if f.View.Dropdown.Option.Dynamic != nil {
+		sb.WriteString("Dynamic")
+	}
+	switch {
+	case f.DropdownStrings(), f.DropdownDynamicStrings():
+		sb.WriteString("Strings")
+	case f.DropdownInts(), f.DropdownDynamicInts():
+		sb.WriteString("Ints")
+	case f.DropdownUints(), f.DropdownDynamicUints():
+		sb.WriteString("Uints")
+	case f.DropdownFloats(), f.DropdownDynamicFloats():
+		sb.WriteString("Floats")
+	}
+	return sb.String()
+}

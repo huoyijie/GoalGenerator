@@ -18,4 +18,6 @@ type Translate interface {
 	TranslateName() map[string]string
 
 	TranslateFields() map[string]map[string]string
+
+	TranslateOptions() map[string]map[string]map[string]string
 }
