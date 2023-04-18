@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.24"
+const Version string = "0.0.25"
 
 //go:embed template/*.tpl
 var tmpl string

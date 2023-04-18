@@ -36,35 +36,39 @@ func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Uints() map[string]map[str
 func (*{{.Model.Name.Value}}) {{.Name.Value}}Floats() []float64 {
     return {{.OptionFloats}}
 }
-func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Labels() map[string]map[string]string {
+func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[string]string {
     return {{.OptionFloatLabels}}
 }{{end}}{{if .DropdownDynamicStrings}}
-// Please implements the methods in another file
+// Please implements this method in another file
 // func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicStrings() []string {
 //     return []string{"option1", "option2"}
 // }
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}TranslateDynamicStrings() map[string]map[string]string {
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicStrings() map[string]map[string]string {
 //     return map[string]map[string]string{"en": {"option1": "option 1", "option2": "option 2"}, "zh_CN": {"option1": "选项1", "option2": "选项2"},}
 // }{{end}}{{if .DropdownDynamicInts}}
-// Please implements the methods in another file
+// Please implements this method in another file
 // func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicInts() []int {
 //     return []int{1, 2}
 // }
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}TranslateDynamicInts() map[string]map[string]string {
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicInts() map[string]map[string]string {
 //     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
 // }{{end}}{{if .DropdownDynamicUints}}
-// Please implements the methods in another file
+// Please implements this method in another file
 // func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicUints() []uint {
 //     return []uint{1, 2}
 // }
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}TranslateDynamicUints() map[string]map[string]string {
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicUints() map[string]map[string]string {
 //     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
 // }{{end}}{{if .DropdownDynamicFloats}}
-// Please implements the methods in another file
+// Please implements this method in another file
 // func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicFloats() []float64 {
 //     return []float64{1.2, 2.3}
 // }
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}TranslateDynamicFloats() map[string]map[string]string {
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicFloats() map[string]map[string]string {
 //     return map[string]map[string]string{"en": {"1.2": "one dot two", "2.3": "two dot three"}, "zh_CN": {"1.2": "1点2", "2.3": "2点3"},}
 // }{{end}}{{end}}
 
