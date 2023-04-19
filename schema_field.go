@@ -93,23 +93,17 @@ type Field struct {
 }
 
 func (f *Field) Component() (c string) {
-	switch {
-	case f.View.Number != nil:
-		c = "number"
-	case f.View.Uuid:
-		c = "uuid"
-	case f.View.Text:
-		c = "text"
-	case f.View.Password:
-		c = "password"
-	case f.View.File != nil:
-		c = "file"
-	case f.View.Calendar != nil:
-		c = "calendar"
-	case f.View.Switch:
-		c = "switch"
-	case f.View.Dropdown != nil:
-		c = "dropdown"
+	t := reflect.TypeOf(f.View).Elem()
+	v := reflect.ValueOf(f.View).Elem()
+	for i := 0; i < t.NumField(); i++ {
+		vf := t.Field(i)
+		if vf.Name == "Base" {
+			continue
+		}
+		vfVal := v.FieldByName(vf.Name)
+		if !vfVal.IsZero() {
+			c = ToLowerFirstLetter(vf.Name)
+		}
 	}
 	return
 }
