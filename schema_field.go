@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var DROPDOWN_KIND = [4]string{"strings", "ints", "uints", "floats"}
+
 type Field struct {
 	Model *Model `yaml:"-"`
 	Name  *struct {
@@ -125,22 +127,29 @@ func (f *Field) Type() (t string) {
 	case f.View.Switch:
 		t = "bool"
 	case f.View.Dropdown != nil:
-		switch {
-		case f.View.Dropdown.BelongTo != nil:
+		if d := f.View.Dropdown; d.BelongTo != nil {
 			if belongTo := f.View.Dropdown.BelongTo; belongTo.Pkg == "" {
 				t = belongTo.Name
 			} else {
 				t = strings.Join([]string{belongTo.Pkg, belongTo.Name}, ".")
 			}
-		case f.DropdownStrings(), f.DropdownDynamicStrings():
-			t = "string"
-		case f.DropdownInts(), f.DropdownDynamicInts():
-			t = "int"
-		case f.DropdownUints(), f.DropdownDynamicUints():
-			t = "uint"
-		case f.DropdownFloats(), f.DropdownDynamicFloats():
-			t = "float64"
+		} else {
+			for _, kind := range DROPDOWN_KIND {
+				if f.Dropdown(kind, false) || f.Dropdown(kind, true) {
+					t = f.kindToType(kind)
+					break
+				}
+			}
 		}
+	}
+	return
+}
+
+func (f *Field) kindToType(kind string) (t string) {
+	if kind == "floats" {
+		t = "float64"
+	} else {
+		t = kind[:len(kind)-1]
 	}
 	return
 }
@@ -299,326 +308,89 @@ func (f *Field) Tag() (tag string) {
 	return sb.String()
 }
 
-func (f *Field) DropdownStrings() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Strings) > 0 {
-		return true
+func (f *Field) Dropdown(kind string, dynamic bool) (ok bool) {
+	if d := f.View.Dropdown; d != nil && d.Option != nil {
+		if dynamic {
+			if dyn := d.Option.Dynamic; dyn != nil {
+				dfVal := reflect.ValueOf(dyn).Elem().FieldByName(ToUpperFirstLetter(kind))
+				ok = dfVal.Bool()
+			}
+		} else {
+			ofVal := reflect.ValueOf(d.Option).Elem().FieldByName(ToUpperFirstLetter(kind))
+			ok = ofVal.Len() > 0
+		}
 	}
-	return false
+	return
 }
 
-func (f *Field) OptionStrings() string {
-	if f.DropdownStrings() {
+func (f *Field) DropdownOptions(kind string) string {
+	if f.Dropdown(kind, false) {
+		t := f.kindToType(kind)
 		sb := strings.Builder{}
-		sb.WriteString("[]string{")
+		sb.WriteString("[]")
+		sb.WriteString(t)
+		sb.WriteRune('{')
 		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Strings {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
+		ofVal := reflect.ValueOf(f.View.Dropdown.Option).Elem().FieldByName(ToUpperFirstLetter(kind))
+		for i := 0; i < ofVal.Len(); i++ {
+			ofItemVal := ofVal.Index(i).FieldByName("Value")
+			switch kind {
+			case "strings":
+				f.writeString(&sb, &hasPrev, `"`, ofItemVal.String(), `"`)
+			case "ints":
+				f.writeString(&sb, &hasPrev, fmt.Sprintf("%d", ofItemVal.Elem().Int()))
+			case "uints":
+				f.writeString(&sb, &hasPrev, fmt.Sprintf("%d", ofItemVal.Elem().Uint()))
+			case "floats":
+				f.writeString(&sb, &hasPrev, strconv.FormatFloat(ofItemVal.Elem().Float(), 'f', -1, 64))
 			}
-			sb.WriteRune('"')
-			sb.WriteString(option.Value)
-			sb.WriteRune('"')
 		}
-		sb.WriteString("}")
+		sb.WriteRune('}')
 		return sb.String()
 	} else {
 		return ""
 	}
 }
 
-func (f *Field) OptionStringLabels() string {
-	if f.DropdownStrings() {
-		sb := strings.Builder{}
-		sb.WriteString("map[string]map[string]string{")
-		sb.WriteString(` "en": {`)
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Strings {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(option.Value)
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.En)
-			sb.WriteRune('"')
-		}
-		sb.WriteString(`}, "zh_CN": {`)
-
-		hasPrev = false
-		for _, option := range f.View.Dropdown.Option.Strings {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(option.Value)
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.Zh_CN)
-			sb.WriteRune('"')
-		}
-		sb.WriteString("}")
-
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) DropdownInts() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Ints) > 0 {
-		return true
-	}
-	return false
-}
-
-func (f *Field) OptionInts() string {
-	if f.DropdownInts() {
-		sb := strings.Builder{}
-		sb.WriteString("[]int{")
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Ints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
-		}
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) OptionIntLabels() string {
-	if f.DropdownInts() {
+func (f *Field) DropdownLabels(kind string) string {
+	if f.Dropdown(kind, false) {
 		sb := strings.Builder{}
 		sb.WriteString("map[string]map[string]string{")
-		sb.WriteString(` "en": {`)
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Ints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
+		for _, lang := range []string{"en", "zh_CN"} {
 			sb.WriteRune('"')
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
+			sb.WriteString(lang)
 			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.En)
-			sb.WriteRune('"')
-		}
-		sb.WriteString(`}, "zh_CN": {`)
+			sb.WriteString(": {")
 
-		hasPrev = false
-		for _, option := range f.View.Dropdown.Option.Ints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
+			var hasPrev bool
+			ofVal := reflect.ValueOf(f.View.Dropdown.Option).Elem().FieldByName(ToUpperFirstLetter(kind))
+			for i := 0; i < ofVal.Len(); i++ {
+				ofItemVal := ofVal.Index(i)
+				val := ofItemVal.FieldByName("Value")
+				langVal := ofItemVal.FieldByName(ToUpperFirstLetter(lang))
+				var option string
+				switch kind {
+				case "strings":
+					option = val.String()
+				case "ints":
+					option = fmt.Sprintf("%d", val.Elem().Int())
+				case "uints":
+					option = fmt.Sprintf("%d", val.Elem().Uint())
+				case "floats":
+					option = strconv.FormatFloat(val.Elem().Float(), 'f', -1, 64)
+				}
+				if option != "" {
+					f.writeString(&sb, &hasPrev, `"`, option, `"`, ": ", `"`, langVal.String(), `"`)
+				}
 			}
-			sb.WriteRune('"')
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.Zh_CN)
-			sb.WriteRune('"')
-		}
-		sb.WriteString("}")
 
-		sb.WriteString("}")
+			sb.WriteString(`},`)
+		}
+		sb.WriteRune('}')
 		return sb.String()
 	} else {
 		return ""
 	}
-}
-
-func (f *Field) DropdownUints() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Uints) > 0 {
-		return true
-	}
-	return false
-}
-
-func (f *Field) OptionUints() string {
-	if f.DropdownUints() {
-		sb := strings.Builder{}
-		sb.WriteString("[]uint{")
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Uints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
-		}
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) OptionUintLabels() string {
-	if f.DropdownUints() {
-		sb := strings.Builder{}
-		sb.WriteString("map[string]map[string]string{")
-		sb.WriteString(` "en": {`)
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Uints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.En)
-			sb.WriteRune('"')
-		}
-		sb.WriteString(`}, "zh_CN": {`)
-
-		hasPrev = false
-		for _, option := range f.View.Dropdown.Option.Uints {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(fmt.Sprintf("%d", *option.Value))
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.Zh_CN)
-			sb.WriteRune('"')
-		}
-		sb.WriteString("}")
-
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) DropdownFloats() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && len(d.Option.Floats) > 0 {
-		return true
-	}
-	return false
-}
-
-func (f *Field) OptionFloats() string {
-	if f.DropdownFloats() {
-		sb := strings.Builder{}
-		sb.WriteString("[]float64{")
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Floats {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
-		}
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) OptionFloatLabels() string {
-	if f.DropdownFloats() {
-		sb := strings.Builder{}
-		sb.WriteString("map[string]map[string]string{")
-		sb.WriteString(` "en": {`)
-		var hasPrev bool
-		for _, option := range f.View.Dropdown.Option.Floats {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.En)
-			sb.WriteRune('"')
-		}
-		sb.WriteString(`}, "zh_CN": {`)
-
-		hasPrev = false
-		for _, option := range f.View.Dropdown.Option.Floats {
-			if hasPrev {
-				sb.WriteString(", ")
-			} else {
-				hasPrev = true
-			}
-			sb.WriteRune('"')
-			sb.WriteString(strconv.FormatFloat(*option.Value, 'f', -1, 64))
-			sb.WriteRune('"')
-			sb.WriteString(": ")
-			sb.WriteRune('"')
-			sb.WriteString(option.Zh_CN)
-			sb.WriteRune('"')
-		}
-		sb.WriteString("}")
-
-		sb.WriteString("}")
-		return sb.String()
-	} else {
-		return ""
-	}
-}
-
-func (f *Field) DropdownDynamicStrings() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Strings {
-		return true
-	}
-	return false
-}
-
-func (f *Field) DropdownDynamicInts() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Ints {
-		return true
-	}
-	return false
-}
-
-func (f *Field) DropdownDynamicUints() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Uints {
-		return true
-	}
-	return false
-}
-
-func (f *Field) DropdownDynamicFloats() bool {
-	if d := f.View.Dropdown; d != nil && d.Option != nil && d.Option.Dynamic != nil && d.Option.Dynamic.Floats {
-		return true
-	}
-	return false
 }
 
 func (f *Field) DropdownTranslateOptionMethod() string {
@@ -628,15 +400,11 @@ func (f *Field) DropdownTranslateOptionMethod() string {
 	if f.View.Dropdown.Option.Dynamic != nil {
 		sb.WriteString("Dynamic")
 	}
-	switch {
-	case f.DropdownStrings(), f.DropdownDynamicStrings():
-		sb.WriteString("Strings")
-	case f.DropdownInts(), f.DropdownDynamicInts():
-		sb.WriteString("Ints")
-	case f.DropdownUints(), f.DropdownDynamicUints():
-		sb.WriteString("Uints")
-	case f.DropdownFloats(), f.DropdownDynamicFloats():
-		sb.WriteString("Floats")
+	for _, kind := range DROPDOWN_KIND {
+		if f.Dropdown(kind, false) || f.Dropdown(kind, true) {
+			sb.WriteString(ToUpperFirstLetter(kind))
+			break
+		}
 	}
 	return sb.String()
 }

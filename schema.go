@@ -16,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.28"
+const Version string = "0.0.29"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -34,6 +34,12 @@ type IValid interface {
 func ToLowerFirstLetter(str string) string {
 	a := []rune(str)
 	a[0] = unicode.ToLower(a[0])
+	return string(a)
+}
+
+func ToUpperFirstLetter(str string) string {
+	a := []rune(str)
+	a[0] = unicode.ToUpper(a[0])
 	return string(a)
 }
 
@@ -76,8 +82,11 @@ type Model struct {
 
 func (m *Model) Dropdowns() (fields []Field) {
 	for _, f := range m.Fields {
-		if f.DropdownStrings() || f.DropdownInts() || f.DropdownUints() || f.DropdownFloats() || f.DropdownDynamicStrings() || f.DropdownDynamicInts() || f.DropdownDynamicUints() || f.DropdownDynamicFloats() {
-			fields = append(fields, f)
+		for _, kind := range DROPDOWN_KIND {
+			if f.Dropdown(kind, false) || f.Dropdown(kind, true) {
+				fields = append(fields, f)
+				break
+			}
 		}
 	}
 	return

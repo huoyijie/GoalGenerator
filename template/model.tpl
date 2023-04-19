@@ -7,80 +7,32 @@ import ({{range .Imports}}
 )
 {{end}}
 type {{.Name.Value}} struct {
-{{if .EmbeddingBase}}
-    model.Base{{end}}
-{{range .Fields}}
+    {{if .EmbeddingBase}}model.Base{{end}}{{range .Fields}}
     {{.Name.Value}} {{.Type}} `{{.Tag}}`{{end}}
-}{{if .CustomTableName}}
+}
+
+{{if .CustomTableName}}
 func ({{.Name.Value}}) TableName() string {
     return "{{.TableName}}"
-}{{end}}{{range .Dropdowns}}{{if .DropdownStrings}}
-func (*{{.Model.Name.Value}}) {{.Name.Value}}Strings() []string {
-    return {{.OptionStrings}}
 }
-func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Strings() map[string]map[string]string {
-    return {{.OptionStringLabels}}
-} {{end}}{{if .DropdownInts}}
-func (*{{.Model.Name.Value}}) {{.Name.Value}}Ints() []int {
-    return {{.OptionInts}}
-}
-func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Ints() map[string]map[string]string {
-    return {{.OptionIntLabels}}
-}{{end}}{{if .DropdownUints}}
-func (*{{.Model.Name.Value}}) {{.Name.Value}}Uints() []uint {
-    return {{.OptionUints}}
-}
-func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Uints() map[string]map[string]string {
-    return {{.OptionUintLabels}}
-}{{end}}{{if .DropdownFloats}}
-func (*{{.Model.Name.Value}}) {{.Name.Value}}Floats() []float64 {
-    return {{.OptionFloats}}
-}
-func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[string]string {
-    return {{.OptionFloatLabels}}
-}{{end}}{{if .DropdownDynamicStrings}}
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicStrings() []string {
-//     return []string{"option1", "option2"}
-// }
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicStrings() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"option1": "option 1", "option2": "option 2"}, "zh_CN": {"option1": "选项1", "option2": "选项2"},}
-// }{{end}}{{if .DropdownDynamicInts}}
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicInts() []int {
-//     return []int{1, 2}
-// }
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicInts() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
-// }{{end}}{{if .DropdownDynamicUints}}
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicUints() []uint {
-//     return []uint{1, 2}
-// }
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicUints() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
-// }{{end}}{{if .DropdownDynamicFloats}}
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicFloats() []float64 {
-//     return []float64{1.2, 2.3}
-// }
-// Please implements this method in another file
-// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicFloats() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1.2": "one dot two", "2.3": "two dot three"}, "zh_CN": {"1.2": "1点2", "2.3": "2点3"},}
-// }{{end}}{{end}}
+{{end}}
 
 func (*{{.Name.Value}}) Icon() string {
     return "{{.Icon}}"
-}{{if .Purge}}
+}
+
+{{if .Purge}}
 func (*{{.Name.Value}}) Purge() {}
-{{end}}{{if .Lazy}}
+{{end}}
+
+{{if .Lazy}}
 func (*{{.Name.Value}}) Lazy() {}
-{{end}}{{if .Ctrl}}
+{{end}}
+
+{{if .Ctrl}}
 func (*{{.Name.Value}}) Ctrl() {}
 {{end}}
+
 func (*{{.Name.Value}}) TranslatePkg() map[string]string {
     t := map[string]string{}
     t["en"] = "{{.Package.En}}"
@@ -98,26 +50,112 @@ func (*{{.Name.Value}}) TranslateName() map[string]string {
 func (*{{.Name.Value}}) TranslateFields() map[string]map[string]string {
     return map[string]map[string]string{
         "en": {
-{{if .EmbeddingBase}}
-            "ID": "ID",
-{{end}}{{range .Fields}}
-            "{{.Name.Value}}": "{{.Name.En}}",
-{{end}}        },
+            {{if .EmbeddingBase}}"ID": "ID",{{end}}{{range .Fields}}
+            "{{.Name.Value}}": "{{.Name.En}}",{{end}}
+        },
         "zh_CN": {
-{{if .EmbeddingBase}}
-            "ID": "ID",
-{{end}}{{range .Fields}}
-            "{{.Name.Value}}": "{{.Name.Zh_CN}}",
-{{end}}        },
+            {{if .EmbeddingBase}}"ID": "ID",{{end}}{{range .Fields}}
+            "{{.Name.Value}}": "{{.Name.Zh_CN}}",{{end}}
+        },
     }
 }
 
+{{range .Dropdowns}}
+{{if .Dropdown "strings" false}}
+func (*{{.Model.Name.Value}}) {{.Name.Value}}Strings() []string {
+    return {{.DropdownOptions "strings"}}
+}
+
+func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Strings() map[string]map[string]string {
+    return {{.DropdownLabels "strings"}}
+}
+{{end}}
+
+{{if .Dropdown "ints" false}}
+func (*{{.Model.Name.Value}}) {{.Name.Value}}Ints() []int {
+    return {{.DropdownOptions "ints"}}
+}
+
+func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Ints() map[string]map[string]string {
+    return {{.DropdownLabels "ints"}}
+}
+{{end}}
+
+{{if .Dropdown "uints" false}}
+func (*{{.Model.Name.Value}}) {{.Name.Value}}Uints() []uint {
+    return {{.DropdownOptions "uints"}}
+}
+
+func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Uints() map[string]map[string]string {
+    return {{.DropdownLabels "uints"}}
+}
+{{end}}
+
+{{if .Dropdown "floats" false}}
+func (*{{.Model.Name.Value}}) {{.Name.Value}}Floats() []float64 {
+    return {{.DropdownOptions "floats"}}
+}
+
+func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[string]string {
+    return {{.DropdownLabels "floats"}}
+}
+{{end}}
+
+{{if .Dropdown "strings" true}}
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicStrings() []string {
+//     return []string{"option1", "option2"}
+// }
+
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicStrings() map[string]map[string]string {
+//     return map[string]map[string]string{"en": {"option1": "option 1", "option2": "option 2"}, "zh_CN": {"option1": "选项1", "option2": "选项2"},}
+// }
+{{end}}
+
+{{if .Dropdown "ints" true}}
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicInts() []int {
+//     return []int{1, 2}
+// }
+
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicInts() map[string]map[string]string {
+//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
+// }
+{{end}}
+
+{{if .Dropdown "uints" true}}
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicUints() []uint {
+//     return []uint{1, 2}
+// }
+
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicUints() map[string]map[string]string {
+//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
+// }
+{{end}}
+
+{{if .Dropdown "floats" true}}
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) {{.Name.Value}}DynamicFloats() []float64 {
+//     return []float64{1.2, 2.3}
+// }
+
+// Please implements this method in another file
+// func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicFloats() map[string]map[string]string {
+//     return map[string]map[string]string{"en": {"1.2": "one dot two", "2.3": "two dot three"}, "zh_CN": {"1.2": "1点2", "2.3": "2点3"},}
+// }
+{{end}}
+{{end}}
+
 func (m *{{.Name.Value}}) TranslateOptions() map[string]map[string]map[string]string {
     t := map[string]map[string]map[string]string{"en": {}, "zh_CN": {},}
-{{range .Dropdowns}}
+    {{range .Dropdowns}}
     t{{.Name.Value}} := m.{{.DropdownTranslateOptionMethod}}()
     t["en"]["{{.Name.Value}}"] = t{{.Name.Value}}["en"]
     t["zh_CN"]["{{.Name.Value}}"] = t{{.Name.Value}}["zh_CN"]
-{{end}}
+    {{end}}
     return t
 }
