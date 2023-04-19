@@ -145,70 +145,64 @@ func (f *Field) Type() (t string) {
 	return
 }
 
-func (f *Field) Tag() (tag string) {
-	sb := strings.Builder{}
-	var primary, unique bool
+func (f *Field) writeString(sb *strings.Builder, hasPrev *bool, value string, more ...string) {
+	if *hasPrev {
+		sb.WriteRune(',')
+	} else {
+		*hasPrev = true
+	}
+	sb.WriteString(value)
+	for _, s := range more {
+		sb.WriteString(s)
+	}
+}
+
+func (f *Field) gorm(sb *strings.Builder) (primary bool, unique bool) {
 	if f.Database != nil {
 		primary = f.Database.PrimaryKey
 		unique = f.Database.Unique
 		sb.WriteString(`gorm:"`)
 		var hasPrev bool
 		if primary {
-			if hasPrev {
-				sb.WriteRune(',')
-			}
-			sb.WriteString("primarykey")
-			hasPrev = true
+			f.writeString(sb, &hasPrev, "primarykey")
 		}
 		if unique {
-			if hasPrev {
-				sb.WriteRune(',')
-			}
-			sb.WriteString("unique")
-			hasPrev = true
+			f.writeString(sb, &hasPrev, "unique")
 		}
 		if f.Database.Index {
-			if hasPrev {
-				sb.WriteRune(',')
-			}
-			sb.WriteString("index")
+			f.writeString(sb, &hasPrev, "index")
 		}
 		sb.WriteString(`" `)
 	}
+	return
+}
 
+func (f *Field) validator(sb *strings.Builder) {
 	if f.Validator != nil {
 		sb.WriteString(`binding:"`)
 		t := reflect.TypeOf(f.Validator).Elem()
 		val := reflect.ValueOf(f.Validator).Elem()
 		var hasPrev bool
 		for i := 0; i < t.NumField(); i++ {
-			f := t.Field(i)
-			fVal := val.FieldByName(f.Name)
+			vf := t.Field(i)
+			fVal := val.FieldByName(vf.Name)
 			switch fVal.Kind() {
 			case reflect.Bool:
 				if fVal.Bool() {
-					if hasPrev {
-						sb.WriteRune(',')
-					}
-					sb.WriteString(ToLowerFirstLetter(f.Name))
-					hasPrev = true
+					f.writeString(sb, &hasPrev, ToLowerFirstLetter(vf.Name))
 				}
 			case reflect.Pointer:
 				if !fVal.IsNil() {
 					fVal = fVal.Elem()
-					if hasPrev {
-						sb.WriteRune(',')
-					}
-					sb.WriteString(ToLowerFirstLetter(f.Name))
-					sb.WriteRune('=')
-					sb.WriteString(fmt.Sprintf("%v", fVal.Interface()))
-					hasPrev = true
+					f.writeString(sb, &hasPrev, ToLowerFirstLetter(vf.Name), "=", fmt.Sprintf("%v", fVal.Interface()))
 				}
 			}
 		}
 		sb.WriteString(`" `)
 	}
+}
 
+func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 	if f.View != nil {
 		sb.WriteString(`goal:"<`)
 		sb.WriteString(f.Component())
@@ -216,26 +210,18 @@ func (f *Field) Tag() (tag string) {
 
 		var hasPrev bool
 		if primary {
-			if hasPrev {
-				sb.WriteRune(',')
-			}
-			sb.WriteString("primary")
-			hasPrev = true
+			f.writeString(sb, &hasPrev, "primary")
 		}
 		if unique {
-			if hasPrev {
-				sb.WriteRune(',')
-			}
-			sb.WriteString("unique")
-			hasPrev = true
+			f.writeString(sb, &hasPrev, "unique")
 		}
 
 		m := f.Model
 		t := reflect.TypeOf(f.View).Elem()
 		val := reflect.ValueOf(f.View).Elem()
 		for i := 0; i < t.NumField(); i++ {
-			f := t.Field(i)
-			fVal := val.FieldByName(f.Name)
+			vf := t.Field(i)
+			fVal := val.FieldByName(vf.Name)
 			switch fVal.Kind() {
 			case reflect.Pointer:
 				if !fVal.IsNil() {
@@ -247,35 +233,19 @@ func (f *Field) Tag() (tag string) {
 						switch cfVal.Kind() {
 						case reflect.Bool:
 							if cfVal.Bool() {
-								if hasPrev {
-									sb.WriteRune(',')
-								}
-								sb.WriteString(ToLowerFirstLetter(cf.Name))
-								hasPrev = true
+								f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name))
 							}
 						case reflect.String:
 							if !cfVal.IsZero() {
-								if hasPrev {
-									sb.WriteRune(',')
-								}
-								sb.WriteString(ToLowerFirstLetter(cf.Name))
-								sb.WriteRune('=')
-								sb.WriteString(cfVal.String())
-								hasPrev = true
+								f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", cfVal.String())
 							}
 						case reflect.Pointer:
 							if !cfVal.IsNil() {
 								switch e := cfVal.Elem(); e.Kind() {
 								case reflect.Int:
-									if hasPrev {
-										sb.WriteRune(',')
-									}
-									sb.WriteString(ToLowerFirstLetter(cf.Name))
-									sb.WriteRune('=')
-									sb.WriteString(fmt.Sprintf("%v", e.Interface()))
-									hasPrev = true
+									f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%v", e.Interface()))
 								case reflect.Struct:
-									if f.Name == "Dropdown" {
+									if vf.Name == "Dropdown" {
 										switch cf.Name {
 										case "BelongTo":
 											p := e.FieldByName("Pkg").Interface().(string)
@@ -284,13 +254,7 @@ func (f *Field) Tag() (tag string) {
 											}
 											n := e.FieldByName("Name").Interface()
 											fn := e.FieldByName("Field").Interface()
-											if hasPrev {
-												sb.WriteRune(',')
-											}
-											sb.WriteString(ToLowerFirstLetter(cf.Name))
-											sb.WriteRune('=')
-											sb.WriteString(fmt.Sprintf("%s.%s.%s", p, n, fn))
-											hasPrev = true
+											f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%s.%s.%s", p, n, fn))
 										case "Option":
 											ot := reflect.TypeOf(e.Interface())
 											for i := 0; i < ot.NumField(); i++ {
@@ -299,11 +263,7 @@ func (f *Field) Tag() (tag string) {
 												switch oVal.Kind() {
 												case reflect.Slice:
 													if !oVal.IsZero() && oVal.Len() > 0 {
-														if hasPrev {
-															sb.WriteRune(',')
-														}
-														sb.WriteString(ToLowerFirstLetter(of.Name))
-														hasPrev = true
+														f.writeString(sb, &hasPrev, ToLowerFirstLetter(of.Name))
 													}
 												case reflect.Pointer: // dynamic
 													if !oVal.IsNil() {
@@ -312,12 +272,7 @@ func (f *Field) Tag() (tag string) {
 															df := dt.Field(i)
 															dVal := oVal.Elem().FieldByName(df.Name)
 															if dVal.Bool() {
-																if hasPrev {
-																	sb.WriteRune(',')
-																}
-																sb.WriteString("dynamic")
-																sb.WriteString(df.Name)
-																hasPrev = true
+																f.writeString(sb, &hasPrev, "dynamic", df.Name)
 															}
 														}
 													}
@@ -334,7 +289,13 @@ func (f *Field) Tag() (tag string) {
 		}
 		sb.WriteString(`"`)
 	}
+}
 
+func (f *Field) Tag() (tag string) {
+	sb := strings.Builder{}
+	primary, unique := f.gorm(&sb)
+	f.validator(&sb)
+	f.view(&sb, primary, unique)
 	return sb.String()
 }
 
