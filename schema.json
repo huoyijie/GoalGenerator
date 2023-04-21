@@ -49,7 +49,7 @@
     },
     "database": {
       "type": "object",
-      "description": "rules of database [embeddingbase,purge, tablename]",
+      "description": "rules of database [embeddingbase,purge,tablename]",
       "additionalProperties": false,
       "properties": {
         "embeddingbase": {
@@ -409,7 +409,7 @@
                   },
                   "belongto": {
                     "type": "object",
-                    "description": "belong to another model",
+                    "description": "Belong To: belong to another model",
                     "required": ["name", "field"],
                     "maxProperties": 3,
                     "additionalProperties": false,
@@ -428,6 +428,30 @@
                         "type": "string",
                         "description": "field of other model",
                         "examples": ["Username"]
+                      }
+                    }
+                  },
+                  "hasone": {
+                    "type": "object",
+                    "description": "Has One: has another model",
+                    "required": ["name", "field"],
+                    "maxProperties": 3,
+                    "additionalProperties": false,
+                    "properties": {
+                      "pkg": {
+                        "type": "string",
+                        "description": "package of other model",
+                        "examples": ["country"]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name of other model",
+                        "examples": ["Identify"]
+                      },
+                      "field": {
+                        "type": "string",
+                        "description": "field of other model",
+                        "examples": ["NO"]
                       }
                     }
                   }

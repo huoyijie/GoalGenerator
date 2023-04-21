@@ -77,6 +77,11 @@ type Field struct {
 				Name,
 				Field string `yaml:",omitempty"`
 			} `yaml:",omitempty"`
+			HasOne *struct {
+				Pkg,
+				Name,
+				Field string `yaml:",omitempty"`
+			} `yaml:",omitempty"`
 		} `yaml:",omitempty"`
 		Calendar *struct {
 			ShowTime,
@@ -132,6 +137,12 @@ func (f *Field) Type() (t string) {
 				t = belongTo.Name
 			} else {
 				t = strings.Join([]string{belongTo.Pkg, belongTo.Name}, ".")
+			}
+		} else if d.HasOne != nil {
+			if hasOne := f.View.Dropdown.HasOne; hasOne.Pkg == "" {
+				t = hasOne.Name
+			} else {
+				t = strings.Join([]string{hasOne.Pkg, hasOne.Name}, ".")
 			}
 		} else {
 			for _, kind := range DROPDOWN_KIND {
@@ -256,7 +267,7 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 								case reflect.Struct:
 									if vf.Name == "Dropdown" {
 										switch cf.Name {
-										case "BelongTo":
+										case "BelongTo", "HasOne":
 											p := e.FieldByName("Pkg").Interface().(string)
 											if p == "" {
 												p = m.Package.Value
