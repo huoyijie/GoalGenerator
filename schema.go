@@ -54,7 +54,7 @@ func GetMoudlePath() (pkgPath string) {
 }
 
 type Translate struct {
-	En    string `yaml:",omitempty"`
+	En   string `yaml:",omitempty"`
 	ZhCN string `yaml:"zh-CN,omitempty"`
 }
 

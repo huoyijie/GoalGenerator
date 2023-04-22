@@ -378,7 +378,7 @@ func (f *Field) DropdownLabels(kind string) string {
 			for i := 0; i < ofVal.Len(); i++ {
 				ofItemVal := ofVal.Index(i)
 				val := ofItemVal.FieldByName("Value")
-				langVal := ofItemVal.FieldByName(ToUpperFirstLetter(lang))
+				langVal := ofItemVal.FieldByName(ToUpperFirstLetter(strings.ReplaceAll(lang, "-", "")))
 				var option string
 				switch kind {
 				case "strings":
