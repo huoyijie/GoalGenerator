@@ -2,11 +2,11 @@
 package:
   value: auth
   en: Auth
-  zh_CN: 认证授权
+  zh-CN: 认证授权
 name:
   value: User
   en: User | users
-  zh_CN: 用户
+  zh-CN: 用户
 database:
   embeddingbase: true
   tablename: auth_users
@@ -17,7 +17,7 @@ fields:
   - name:
       value: Username
       en: Username
-      zh_CN: 用户名
+      zh-CN: 用户名
     database:
       unique: true
     view:
@@ -34,7 +34,7 @@ fields:
   - name:
       value: Password
       en: Password
-      zh_CN: 密码
+      zh-CN: 密码
     database:
       unique: true
     view:
@@ -48,7 +48,7 @@ fields:
   - name:
       value: RoleID
       en: Role ID
-      zh_CN: 角色ID
+      zh-CN: 角色ID
     view:
       number:
         uint: true
@@ -57,7 +57,7 @@ fields:
   - name:
       value: Role
       en: Role
-      zh_CN: 角色
+      zh-CN: 角色
     view:
       dropdown:
         belongto:
@@ -70,7 +70,7 @@ fields:
   - name:
       value: Avatar
       en: Avatar
-      zh_CN: 头像
+      zh-CN: 头像
     view:
       file:
         uploadto: uploads

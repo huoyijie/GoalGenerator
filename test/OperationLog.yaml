@@ -2,11 +2,11 @@
 package:
   value: admin
   en: Admin
-  zh_CN: 通用管理
+  zh-CN: 通用管理
 name:
   value: OperationLog
   en: Operation Log | operation logs
-  zh_CN: 操作日志
+  zh-CN: 操作日志
 database:
   embeddingbase: true
   tablename: admin_oplogs
@@ -19,7 +19,7 @@ fields:
   - name:
       value: UserID
       en: User ID
-      zh_CN: 用户ID
+      zh-CN: 用户ID
     database:
       index: true
     view:
@@ -30,7 +30,7 @@ fields:
   - name:
       value: User
       en: User
-      zh_CN: 用户
+      zh-CN: 用户
     view:
       dropdown:
         belongto:
@@ -44,7 +44,7 @@ fields:
   - name:
       value: Date
       en: Date
-      zh_CN: 时间
+      zh-CN: 时间
     database:
       index: true
     view:
@@ -57,7 +57,7 @@ fields:
   - name:
       value: IP
       en: IP
-      zh_CN: IP
+      zh-CN: IP
     view:
       text: true
       base:
@@ -65,39 +65,39 @@ fields:
   - name:
       value: Group
       en: Group
-      zh_CN: 组
+      zh-CN: 组
     view:
       dropdown:
         option:
           uints:
             - value: 0
               en: zero
-              zh_CN: 零
+              zh-CN: 零
             - value: 1
               en: one
-              zh_CN: 一
+              zh-CN: 一
       base:
         filter: true
   - name:
       value: Item
       en: Item
-      zh_CN: 项
+      zh-CN: 项
     view:
       dropdown:
         option:
           floats:
             - value: 2.3
               en: '2dot3'
-              zh_CN: '2点3'
+              zh-CN: '2点3'
             - value: 3.4
               en: '3dot4'
-              zh_CN: '3点4'
+              zh-CN: '3点4'
       base:
         filter: true
   - name:
       value: Action
       en: Action
-      zh_CN: 动作
+      zh-CN: 动作
     view:
       dropdown:
         option:
@@ -108,7 +108,7 @@ fields:
   - name:
       value: ObjectID
       en: Object ID
-      zh_CN: 目标ID
+      zh-CN: 目标ID
     view:
       number:
         uint: true

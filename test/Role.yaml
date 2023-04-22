@@ -2,11 +2,11 @@
 package:
   value: auth
   en: Auth
-  zh_CN: 认证授权
+  zh-CN: 认证授权
 name:
   value: Role
   en: Role | roles
-  zh_CN: 角色
+  zh-CN: 角色
 database:
   embeddingbase: true
   tablename: auth_roles
@@ -17,7 +17,7 @@ fields:
   - name:
       value: Name
       en: Name
-      zh_CN: 名称
+      zh-CN: 名称
     database:
       unique: true
     view:

@@ -367,7 +367,7 @@ func (f *Field) DropdownLabels(kind string) string {
 	if f.Dropdown(kind, false) {
 		sb := strings.Builder{}
 		sb.WriteString("map[string]map[string]string{")
-		for _, lang := range []string{"en", "zh_CN"} {
+		for _, lang := range []string{"en", "zh-CN"} {
 			sb.WriteRune('"')
 			sb.WriteString(lang)
 			sb.WriteRune('"')

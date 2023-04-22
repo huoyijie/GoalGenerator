@@ -21,9 +21,9 @@
           "type": "string",
           "description": "translate to en"
         },
-        "zh_CN": {
+        "zh-CN": {
           "type": "string",
-          "description": "translate to zh_CN"
+          "description": "translate to zh-CN"
         }
       }
     },
@@ -41,9 +41,9 @@
           "type": "string",
           "description": "translate to en"
         },
-        "zh_CN": {
+        "zh-CN": {
           "type": "string",
-          "description": "translate to zh_CN"
+          "description": "translate to zh-CN"
         }
       }
     },
@@ -116,9 +116,9 @@
                 "type": "string",
                 "description": "translate to en"
               },
-              "zh_CN": {
+              "zh-CN": {
                 "type": "string",
-                "description": "translate to zh_CN"
+                "description": "translate to zh-CN"
               }
             }
           },
@@ -331,7 +331,7 @@
                             "en": {
                               "type": "string"
                             },
-                            "zh_CN": {
+                            "zh-CN": {
                               "type": "string"
                             }
                           }
@@ -353,7 +353,7 @@
                             "en": {
                               "type": "string"
                             },
-                            "zh_CN": {
+                            "zh-CN": {
                               "type": "string"
                             }
                           }
@@ -376,7 +376,7 @@
                             "en": {
                               "type": "string"
                             },
-                            "zh_CN": {
+                            "zh-CN": {
                               "type": "string"
                             }
                           }
@@ -398,7 +398,7 @@
                             "en": {
                               "type": "string"
                             },
-                            "zh_CN": {
+                            "zh-CN": {
                               "type": "string"
                             }
                           }

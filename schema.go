@@ -16,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version string = "0.0.30"
+const Version string = "0.0.31"
 
 //go:embed template/*.tpl
 var tmpl string
@@ -55,7 +55,7 @@ func GetMoudlePath() (pkgPath string) {
 
 type Translate struct {
 	En    string `yaml:",omitempty"`
-	Zh_CN string `yaml:"zh_CN,omitempty"`
+	ZhCN string `yaml:"zh-CN,omitempty"`
 }
 
 type Model struct {

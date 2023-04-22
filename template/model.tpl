@@ -36,14 +36,14 @@ func (*{{.Name.Value}}) Ctrl() {}
 func (*{{.Name.Value}}) TranslatePkg() map[string]string {
     t := map[string]string{}
     t["en"] = "{{.Package.En}}"
-    t["zh_CN"] = "{{.Package.Zh_CN}}"
+    t["zh-CN"] = "{{.Package.ZhCN}}"
     return t
 }
 
 func (*{{.Name.Value}}) TranslateName() map[string]string {
     t := map[string]string{}
     t["en"] = "{{.Name.En}}"
-    t["zh_CN"] = "{{.Name.Zh_CN}}"
+    t["zh-CN"] = "{{.Name.ZhCN}}"
     return t
 }
 
@@ -53,9 +53,9 @@ func (*{{.Name.Value}}) TranslateFields() map[string]map[string]string {
             {{if .EmbeddingBase}}"ID": "ID",{{end}}{{range .Fields}}
             "{{.Name.Value}}": "{{.Name.En}}",{{end}}
         },
-        "zh_CN": {
+        "zh-CN": {
             {{if .EmbeddingBase}}"ID": "ID",{{end}}{{range .Fields}}
-            "{{.Name.Value}}": "{{.Name.Zh_CN}}",{{end}}
+            "{{.Name.Value}}": "{{.Name.ZhCN}}",{{end}}
         },
     }
 }
@@ -109,7 +109,7 @@ func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[st
 
 // Please implements this method in another file
 // func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicStrings() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"option1": "option 1", "option2": "option 2"}, "zh_CN": {"option1": "选项1", "option2": "选项2"},}
+//     return map[string]map[string]string{"en": {"option1": "option 1", "option2": "option 2"}, "zh-CN": {"option1": "选项1", "option2": "选项2"},}
 // }
 {{end}}
 
@@ -121,7 +121,7 @@ func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[st
 
 // Please implements this method in another file
 // func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicInts() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
+//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh-CN": {"1": "值1", "2": "值2"},}
 // }
 {{end}}
 
@@ -133,7 +133,7 @@ func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[st
 
 // Please implements this method in another file
 // func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicUints() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh_CN": {"1": "值1", "2": "值2"},}
+//     return map[string]map[string]string{"en": {"1": "value 1", "2": "value 2"}, "zh-CN": {"1": "值1", "2": "值2"},}
 // }
 {{end}}
 
@@ -145,17 +145,17 @@ func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}Floats() map[string]map[st
 
 // Please implements this method in another file
 // func (*{{.Model.Name.Value}}) Translate{{.Name.Value}}DynamicFloats() map[string]map[string]string {
-//     return map[string]map[string]string{"en": {"1.2": "one dot two", "2.3": "two dot three"}, "zh_CN": {"1.2": "1点2", "2.3": "2点3"},}
+//     return map[string]map[string]string{"en": {"1.2": "one dot two", "2.3": "two dot three"}, "zh-CN": {"1.2": "1点2", "2.3": "2点3"},}
 // }
 {{end}}
 {{end}}
 
 func (m *{{.Name.Value}}) TranslateOptions() map[string]map[string]map[string]string {
-    t := map[string]map[string]map[string]string{"en": {}, "zh_CN": {},}
+    t := map[string]map[string]map[string]string{"en": {}, "zh-CN": {},}
     {{range .Dropdowns}}
     t{{.Name.Value}} := m.{{.DropdownTranslateOptionMethod}}()
     t["en"]["{{.Name.Value}}"] = t{{.Name.Value}}["en"]
-    t["zh_CN"]["{{.Name.Value}}"] = t{{.Name.Value}}["zh_CN"]
+    t["zh-CN"]["{{.Name.Value}}"] = t{{.Name.Value}}["zh-CN"]
     {{end}}
     return t
 }
