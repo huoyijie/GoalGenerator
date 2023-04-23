@@ -146,7 +146,7 @@
           },
           "view": {
             "type": "object",
-            "description": "rules of components [base, number, uuid, switch, text, password, dropdown, calendar, file]",
+            "description": "rules of components [base, number, uuid, switch, text, password, dropdown, calendar, file, inline, multiselect]",
             "maxProperties": 2,
             "minProperties": 1,
             "additionalProperties": false,
@@ -477,8 +477,7 @@
               "inline": {
                 "type": "object",
                 "description": "inline",
-                "maxProperties": 1,
-                "minProperties": 1,
+                "required": ["hasmany"],
                 "additionalProperties": false,
                 "properties": {
                   "hasmany": {
@@ -499,7 +498,15 @@
                         "examples": ["Role"]
                       }
                     }
-                  },
+                  }
+                }
+              },
+              "multiselect": {
+                "type": "object",
+                "description": "multiselect",
+                "required": ["many2many"],
+                "additionalProperties": false,
+                "properties": {
                   "many2many": {
                     "type": "object",
                     "description": "Many to Many: has many another models",
@@ -549,6 +556,9 @@
               },
               {
                 "required": ["inline"]
+              },
+              {
+                "required": ["multiselect"]
               }
             ]
           },

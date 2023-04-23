@@ -50,7 +50,7 @@ fields:
       en: Roles
       zh-CN: 角色
     view:
-      inline:
+      multiselect:
         many2many:
           name: Role
     validator:

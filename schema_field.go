@@ -93,6 +93,8 @@ type Field struct {
 				Pkg,
 				Name string `yaml:",omitempty"`
 			} `yaml:",omitempty"`
+		} `yaml:",omitempty"`
+		MultiSelect *struct {
 			Many2Many *struct {
 				Pkg,
 				Name string `yaml:",omitempty"`
@@ -164,18 +166,21 @@ func (f *Field) Type() (t string) {
 			}
 		}
 	case f.View.Inline != nil:
-		t = "[]"
 		if i := f.View.Inline; i.HasMany != nil {
+			t = "[]"
 			if i.HasMany.Pkg == "" {
 				t += i.HasMany.Name
 			} else {
 				t += strings.Join([]string{i.HasMany.Pkg, i.HasMany.Name}, ".")
 			}
-		} else if i.Many2Many != nil {
-			if i.Many2Many.Pkg == "" {
-				t += i.Many2Many.Name
+		}
+	case f.View.MultiSelect != nil:
+		if ms := f.View.MultiSelect; ms.Many2Many != nil {
+			t = "[]"
+			if ms.Many2Many.Pkg == "" {
+				t += ms.Many2Many.Name
 			} else {
-				t += strings.Join([]string{i.Many2Many.Pkg, i.Many2Many.Name}, ".")
+				t += strings.Join([]string{ms.Many2Many.Pkg, ms.Many2Many.Name}, ".")
 			}
 		}
 	}
@@ -208,8 +213,8 @@ func (f *Field) writeStringWithSep(sb *strings.Builder, hasPrev *bool, sep, valu
 }
 
 func (f *Field) many2many(sb *strings.Builder, hasPrev *bool) {
-	if i := f.View.Inline; i != nil && i.Many2Many != nil {
-		f.writeStringWithSep(sb, hasPrev, ";", "many2many:", strings.ToLower(f.Model.Name.Value), "_", strings.ToLower(pluralize.NewClient().Plural(i.Many2Many.Name)))
+	if ms := f.View.MultiSelect; ms != nil && ms.Many2Many != nil {
+		f.writeStringWithSep(sb, hasPrev, ";", "many2many:", strings.ToLower(f.Model.Name.Value), "_", strings.ToLower(pluralize.NewClient().Plural(ms.Many2Many.Name)))
 	}
 }
 
@@ -230,7 +235,7 @@ func (f *Field) gorm(sb *strings.Builder) (primary bool, unique bool) {
 		}
 		f.many2many(sb, &hasPrev)
 		sb.WriteString(`" `)
-	} else if i := f.View.Inline; i != nil && i.Many2Many != nil {
+	} else if ms := f.View.MultiSelect; ms != nil && ms.Many2Many != nil {
 		sb.WriteString(`gorm:"`)
 		var hasPrev bool
 		f.many2many(sb, &hasPrev)
@@ -342,7 +347,7 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 												}
 											}
 										}
-									case "Inline":
+									case "Inline", "MultiSelect":
 										switch cf.Name {
 										case "HasMany", "Many2Many":
 											p := e.FieldByName("Pkg").Interface().(string)
