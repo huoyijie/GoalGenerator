@@ -97,7 +97,8 @@ type Field struct {
 		MultiSelect *struct {
 			Many2Many *struct {
 				Pkg,
-				Name string `yaml:",omitempty"`
+				Name,
+				Field string `yaml:",omitempty"`
 			} `yaml:"many2many,omitempty"`
 		} `yaml:",omitempty"`
 	} `yaml:",omitempty"`
@@ -348,14 +349,17 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 											}
 										}
 									case "Inline", "MultiSelect":
+										p := e.FieldByName("Pkg").Interface().(string)
+										if p == "" {
+											p = m.Package.Value
+										}
+										n := e.FieldByName("Name").Interface()
 										switch cf.Name {
-										case "HasMany", "Many2Many":
-											p := e.FieldByName("Pkg").Interface().(string)
-											if p == "" {
-												p = m.Package.Value
-											}
-											n := e.FieldByName("Name").Interface()
+										case "HasMany":
 											f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%s.%s", p, n))
+										case "Many2Many":
+											fn := e.FieldByName("Field").Interface()
+											f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%s.%s.%s", p, n, fn))
 										}
 									}
 								}

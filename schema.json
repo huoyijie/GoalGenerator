@@ -510,8 +510,8 @@
                   "many2many": {
                     "type": "object",
                     "description": "Many to Many: has many another models",
-                    "required": ["name"],
-                    "maxProperties": 2,
+                    "required": ["name", "field"],
+                    "maxProperties": 3,
                     "additionalProperties": false,
                     "properties": {
                       "pkg": {
@@ -523,6 +523,11 @@
                         "type": "string",
                         "description": "name of other model",
                         "examples": ["Role"]
+                      },
+                      "field": {
+                        "type": "string",
+                        "description": "field of other model",
+                        "examples": ["Name"]
                       }
                     }
                   }

@@ -53,6 +53,7 @@ fields:
       multiselect:
         many2many:
           name: Role
+          field: Name
     validator:
       required: true
   - name:
