@@ -23,3 +23,12 @@ fields:
       text: true
     validator:
       required: true
+  - name:
+      value: QuestionID
+      en: Question ID
+      zh-CN: 问题ID
+    view:
+      base:
+        autowired: true
+      number:
+        uint: true
