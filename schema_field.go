@@ -2,6 +2,7 @@ package goalgenerator
 
 import (
 	"fmt"
+	pluralize "github.com/gertd/go-pluralize"
 	"reflect"
 	"strconv"
 	"strings"
@@ -87,6 +88,16 @@ type Field struct {
 			ShowTime,
 			ShowIcon bool `yaml:",omitempty"`
 		} `yaml:",omitempty"`
+		Inline *struct {
+			HasMany *struct {
+				Pkg,
+				Name string `yaml:",omitempty"`
+			} `yaml:",omitempty"`
+			Many2Many *struct {
+				Pkg,
+				Name string `yaml:",omitempty"`
+			} `yaml:"many2many,omitempty"`
+		} `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 	Validator *struct {
 		Required,
@@ -133,16 +144,16 @@ func (f *Field) Type() (t string) {
 		t = "bool"
 	case f.View.Dropdown != nil:
 		if d := f.View.Dropdown; d.BelongTo != nil {
-			if belongTo := f.View.Dropdown.BelongTo; belongTo.Pkg == "" {
-				t = belongTo.Name
+			if d.BelongTo.Pkg == "" {
+				t = d.BelongTo.Name
 			} else {
-				t = strings.Join([]string{belongTo.Pkg, belongTo.Name}, ".")
+				t = strings.Join([]string{d.BelongTo.Pkg, d.BelongTo.Name}, ".")
 			}
 		} else if d.HasOne != nil {
-			if hasOne := f.View.Dropdown.HasOne; hasOne.Pkg == "" {
-				t = hasOne.Name
+			if d.HasOne.Pkg == "" {
+				t = d.HasOne.Name
 			} else {
-				t = strings.Join([]string{hasOne.Pkg, hasOne.Name}, ".")
+				t = strings.Join([]string{d.HasOne.Pkg, d.HasOne.Name}, ".")
 			}
 		} else {
 			for _, kind := range DROPDOWN_KIND {
@@ -150,6 +161,21 @@ func (f *Field) Type() (t string) {
 					t = f.kindToType(kind)
 					break
 				}
+			}
+		}
+	case f.View.Inline != nil:
+		t = "[]"
+		if i := f.View.Inline; i.HasMany != nil {
+			if i.HasMany.Pkg == "" {
+				t += i.HasMany.Name
+			} else {
+				t += strings.Join([]string{i.HasMany.Pkg, i.HasMany.Name}, ".")
+			}
+		} else if i.Many2Many != nil {
+			if i.Many2Many.Pkg == "" {
+				t += i.Many2Many.Name
+			} else {
+				t += strings.Join([]string{i.Many2Many.Pkg, i.Many2Many.Name}, ".")
 			}
 		}
 	}
@@ -166,14 +192,24 @@ func (f *Field) kindToType(kind string) (t string) {
 }
 
 func (f *Field) writeString(sb *strings.Builder, hasPrev *bool, value string, more ...string) {
+	f.writeStringWithSep(sb, hasPrev, ",", value, more...)
+}
+
+func (f *Field) writeStringWithSep(sb *strings.Builder, hasPrev *bool, sep, value string, more ...string) {
 	if *hasPrev {
-		sb.WriteRune(',')
+		sb.WriteString(sep)
 	} else {
 		*hasPrev = true
 	}
 	sb.WriteString(value)
 	for _, s := range more {
 		sb.WriteString(s)
+	}
+}
+
+func (f *Field) many2many(sb *strings.Builder, hasPrev *bool) {
+	if i := f.View.Inline; i != nil && i.Many2Many != nil {
+		f.writeStringWithSep(sb, hasPrev, ";", "many2many:", strings.ToLower(f.Model.Name.Value), "_", strings.ToLower(pluralize.NewClient().Plural(i.Many2Many.Name)))
 	}
 }
 
@@ -184,14 +220,20 @@ func (f *Field) gorm(sb *strings.Builder) (primary bool, unique bool) {
 		sb.WriteString(`gorm:"`)
 		var hasPrev bool
 		if primary {
-			f.writeString(sb, &hasPrev, "primarykey")
+			f.writeStringWithSep(sb, &hasPrev, ";", "primarykey")
 		}
 		if unique {
-			f.writeString(sb, &hasPrev, "unique")
+			f.writeStringWithSep(sb, &hasPrev, ";", "unique")
 		}
 		if f.Database.Index {
-			f.writeString(sb, &hasPrev, "index")
+			f.writeStringWithSep(sb, &hasPrev, ";", "index")
 		}
+		f.many2many(sb, &hasPrev)
+		sb.WriteString(`" `)
+	} else if i := f.View.Inline; i != nil {
+		sb.WriteString(`gorm:"`)
+		var hasPrev bool
+		f.many2many(sb, &hasPrev)
 		sb.WriteString(`" `)
 	}
 	return
@@ -265,7 +307,8 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 								case reflect.Int:
 									f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%v", e.Interface()))
 								case reflect.Struct:
-									if vf.Name == "Dropdown" {
+									switch vf.Name {
+									case "Dropdown":
 										switch cf.Name {
 										case "BelongTo", "HasOne":
 											p := e.FieldByName("Pkg").Interface().(string)
@@ -298,6 +341,16 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 													}
 												}
 											}
+										}
+									case "Inline":
+										switch cf.Name {
+										case "HasMany", "Many2Many":
+											p := e.FieldByName("Pkg").Interface().(string)
+											if p == "" {
+												p = m.Package.Value
+											}
+											n := e.FieldByName("Name").Interface()
+											f.writeString(sb, &hasPrev, ToLowerFirstLetter(cf.Name), "=", fmt.Sprintf("%s.%s", p, n))
 										}
 									}
 								}

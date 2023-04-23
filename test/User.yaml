@@ -46,25 +46,13 @@ fields:
       alphanum: true
       min: 8
   - name:
-      value: RoleID
-      en: Role ID
-      zh-CN: 角色ID
-    view:
-      number:
-        uint: true
-      base:
-        autowired: true
-  - name:
-      value: Role
-      en: Role
+      value: Roles
+      en: Roles
       zh-CN: 角色
     view:
-      dropdown:
-        belongto:
+      inline:
+        many2many:
           name: Role
-          field: Name
-      base:
-        filter: true
     validator:
       required: true
   - name:

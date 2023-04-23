@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../schema.json
+package:
+  value: paper
+  en: Paper
+  zh-CN: 试卷
+name:
+  value: Choice
+  en: Choice | choices
+  zh-CN: 选项
+database:
+  embeddingbase: true
+view:
+  icon: choice
+fields:
+  - name:
+      value: Content
+      en: Content
+      zh-CN: 内容
+    view:
+      base:
+        globalsearch: true
+        filter: true
+      text: true
+    validator:
+      required: true

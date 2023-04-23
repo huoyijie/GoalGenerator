@@ -473,6 +473,53 @@
                     "examples": [true]
                   }
                 }
+              },
+              "inline": {
+                "type": "object",
+                "description": "inline",
+                "maxProperties": 1,
+                "minProperties": 1,
+                "additionalProperties": false,
+                "properties": {
+                  "hasmany": {
+                    "type": "object",
+                    "description": "Has Many: has many another models",
+                    "required": ["name"],
+                    "maxProperties": 2,
+                    "additionalProperties": false,
+                    "properties": {
+                      "pkg": {
+                        "type": "string",
+                        "description": "package of other model",
+                        "examples": ["auth"]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name of other model",
+                        "examples": ["Role"]
+                      }
+                    }
+                  },
+                  "many2many": {
+                    "type": "object",
+                    "description": "Many to Many: has many another models",
+                    "required": ["name"],
+                    "maxProperties": 2,
+                    "additionalProperties": false,
+                    "properties": {
+                      "pkg": {
+                        "type": "string",
+                        "description": "package of other model",
+                        "examples": ["auth"]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name of other model",
+                        "examples": ["Role"]
+                      }
+                    }
+                  }
+                }
               }
             },
             "anyOf": [
@@ -499,6 +546,9 @@
               },
               {
                 "required": ["calendar"]
+              },
+              {
+                "required": ["inline"]
               }
             ]
           },
