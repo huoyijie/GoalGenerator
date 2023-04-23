@@ -230,7 +230,7 @@ func (f *Field) gorm(sb *strings.Builder) (primary bool, unique bool) {
 		}
 		f.many2many(sb, &hasPrev)
 		sb.WriteString(`" `)
-	} else if i := f.View.Inline; i != nil {
+	} else if i := f.View.Inline; i != nil && i.Many2Many != nil {
 		sb.WriteString(`gorm:"`)
 		var hasPrev bool
 		f.many2many(sb, &hasPrev)
