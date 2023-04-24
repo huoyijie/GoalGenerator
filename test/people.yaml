@@ -42,7 +42,7 @@ fields:
     view:
       base:
         filter: true
-      dropdown:
+      inline:
         hasone:
           name: Identify
           field: NO

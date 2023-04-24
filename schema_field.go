@@ -2,10 +2,11 @@ package goalgenerator
 
 import (
 	"fmt"
-	pluralize "github.com/gertd/go-pluralize"
 	"reflect"
 	"strconv"
 	"strings"
+
+	pluralize "github.com/gertd/go-pluralize"
 )
 
 var DROPDOWN_KIND = [4]string{"strings", "ints", "uints", "floats"}
@@ -74,12 +75,12 @@ type Field struct {
 				} `yaml:",omitempty"`
 			} `yaml:",omitempty"`
 			BelongTo *struct {
-				Pkg,
+				Package,
 				Name,
 				Field string `yaml:",omitempty"`
 			} `yaml:",omitempty"`
 			HasOne *struct {
-				Pkg,
+				Package,
 				Name,
 				Field string `yaml:",omitempty"`
 			} `yaml:",omitempty"`
@@ -89,14 +90,19 @@ type Field struct {
 			ShowIcon bool `yaml:",omitempty"`
 		} `yaml:",omitempty"`
 		Inline *struct {
+			HasOne *struct {
+				Package,
+				Name,
+				Field string `yaml:",omitempty"`
+			} `yaml:",omitempty"`
 			HasMany *struct {
-				Pkg,
+				Package,
 				Name string `yaml:",omitempty"`
 			} `yaml:",omitempty"`
 		} `yaml:",omitempty"`
 		MultiSelect *struct {
 			Many2Many *struct {
-				Pkg,
+				Package,
 				Name,
 				Field string `yaml:",omitempty"`
 			} `yaml:"many2many,omitempty"`
@@ -147,16 +153,16 @@ func (f *Field) Type() (t string) {
 		t = "bool"
 	case f.View.Dropdown != nil:
 		if d := f.View.Dropdown; d.BelongTo != nil {
-			if d.BelongTo.Pkg == "" {
+			if d.BelongTo.Package == "" {
 				t = d.BelongTo.Name
 			} else {
-				t = strings.Join([]string{d.BelongTo.Pkg, d.BelongTo.Name}, ".")
+				t = strings.Join([]string{d.BelongTo.Package, d.BelongTo.Name}, ".")
 			}
 		} else if d.HasOne != nil {
-			if d.HasOne.Pkg == "" {
+			if d.HasOne.Package == "" {
 				t = d.HasOne.Name
 			} else {
-				t = strings.Join([]string{d.HasOne.Pkg, d.HasOne.Name}, ".")
+				t = strings.Join([]string{d.HasOne.Package, d.HasOne.Name}, ".")
 			}
 		} else {
 			for _, kind := range DROPDOWN_KIND {
@@ -169,19 +175,19 @@ func (f *Field) Type() (t string) {
 	case f.View.Inline != nil:
 		if i := f.View.Inline; i.HasMany != nil {
 			t = "[]"
-			if i.HasMany.Pkg == "" {
+			if i.HasMany.Package == "" {
 				t += i.HasMany.Name
 			} else {
-				t += strings.Join([]string{i.HasMany.Pkg, i.HasMany.Name}, ".")
+				t += strings.Join([]string{i.HasMany.Package, i.HasMany.Name}, ".")
 			}
 		}
 	case f.View.MultiSelect != nil:
 		if ms := f.View.MultiSelect; ms.Many2Many != nil {
 			t = "[]"
-			if ms.Many2Many.Pkg == "" {
+			if ms.Many2Many.Package == "" {
 				t += ms.Many2Many.Name
 			} else {
-				t += strings.Join([]string{ms.Many2Many.Pkg, ms.Many2Many.Name}, ".")
+				t += strings.Join([]string{ms.Many2Many.Package, ms.Many2Many.Name}, ".")
 			}
 		}
 	}
@@ -317,7 +323,7 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 									case "Dropdown":
 										switch cf.Name {
 										case "BelongTo", "HasOne":
-											p := e.FieldByName("Pkg").Interface().(string)
+											p := e.FieldByName("Package").Interface().(string)
 											if p == "" {
 												p = m.Package.Value
 											}
@@ -349,7 +355,7 @@ func (f *Field) view(sb *strings.Builder, primary, unique bool) {
 											}
 										}
 									case "Inline", "MultiSelect":
-										p := e.FieldByName("Pkg").Interface().(string)
+										p := e.FieldByName("Package").Interface().(string)
 										if p == "" {
 											p = m.Package.Value
 										}

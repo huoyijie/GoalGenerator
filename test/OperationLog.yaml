@@ -34,7 +34,7 @@ fields:
     view:
       dropdown:
         belongto:
-          pkg: auth
+          package: auth
           name: User
           field: Username
       base:

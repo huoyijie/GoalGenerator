@@ -414,7 +414,7 @@
                     "maxProperties": 3,
                     "additionalProperties": false,
                     "properties": {
-                      "pkg": {
+                      "package": {
                         "type": "string",
                         "description": "package of other model",
                         "examples": ["auth"]
@@ -438,7 +438,7 @@
                     "maxProperties": 3,
                     "additionalProperties": false,
                     "properties": {
-                      "pkg": {
+                      "package": {
                         "type": "string",
                         "description": "package of other model",
                         "examples": ["country"]
@@ -477,9 +477,34 @@
               "inline": {
                 "type": "object",
                 "description": "inline",
-                "required": ["hasmany"],
+                "maxProperties": 1,
+                "minProperties": 1,
                 "additionalProperties": false,
                 "properties": {
+                  "hasone": {
+                    "type": "object",
+                    "description": "Has One: has another model",
+                    "required": ["name", "field"],
+                    "maxProperties": 3,
+                    "additionalProperties": false,
+                    "properties": {
+                      "package": {
+                        "type": "string",
+                        "description": "package of other model",
+                        "examples": ["country"]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name of other model",
+                        "examples": ["Identify"]
+                      },
+                      "field": {
+                        "type": "string",
+                        "description": "field of other model",
+                        "examples": ["NO"]
+                      }
+                    }
+                  },
                   "hasmany": {
                     "type": "object",
                     "description": "Has Many: has many another models",
@@ -487,7 +512,7 @@
                     "maxProperties": 2,
                     "additionalProperties": false,
                     "properties": {
-                      "pkg": {
+                      "package": {
                         "type": "string",
                         "description": "package of other model",
                         "examples": ["auth"]
@@ -514,7 +539,7 @@
                     "maxProperties": 3,
                     "additionalProperties": false,
                     "properties": {
-                      "pkg": {
+                      "package": {
                         "type": "string",
                         "description": "package of other model",
                         "examples": ["auth"]
